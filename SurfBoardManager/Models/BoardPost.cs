@@ -47,5 +47,9 @@ namespace SurfBoardManager.Models
         [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Pris")]
         public decimal Price { get; set; }
+
+        [Column(TypeName = "NVarChar(255)")]
+        [Display(Name = "Billede")]
+        public string BoardImage { get; set; }
     }
 }

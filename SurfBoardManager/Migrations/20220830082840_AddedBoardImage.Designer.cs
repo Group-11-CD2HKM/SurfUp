@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfBoardManager.Data;
 
@@ -10,9 +11,10 @@ using SurfBoardManager.Data;
 namespace SurfBoardManager.Migrations
 {
     [DbContext(typeof(SurfBoardManagerContext))]
-    partial class SurfBoardManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20220830082840_AddedBoardImage")]
+    partial class AddedBoardImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +33,7 @@ namespace SurfBoardManager.Migrations
 
                     b.Property<string>("BoardImage")
                         .IsRequired()
-                        .HasColumnType("NVarChar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("BoardType")
                         .HasColumnType("INT");

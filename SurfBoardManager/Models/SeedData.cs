@@ -30,7 +30,8 @@ namespace SurfBoardManager.Models
                         Volume = 600,
                         BoardType = BoardPost.Type.Fish,
                         Equipment = "Paddle",
-                        Price = 842
+                        Price = 842,
+                        BoardImage = "https://surf-ski.dk/media/catalog/product/cache/7/thumbnail/256x/9df78eab33525d08d6e5fb8d27136e95/b/i/bic_5_10x.jpg"
                     },
 
                     new BoardPost
@@ -42,7 +43,8 @@ namespace SurfBoardManager.Models
                         Volume = 400,
                         BoardType = BoardPost.Type.Funboard,
                         Equipment = "Paddle, Leash",
-                        Price = 564
+                        Price = 564,
+                        BoardImage = "https://surf-ski.dk/media/catalog/product/cache/7/thumbnail/256x/9df78eab33525d08d6e5fb8d27136e95/b/i/bic_5_10x.jpg"
                     },
 
                     new BoardPost
@@ -54,7 +56,8 @@ namespace SurfBoardManager.Models
                         Volume = 859,
                         BoardType = BoardPost.Type.SUP,
                         Equipment = "Paddle, Bone",
-                        Price = 562
+                        Price = 562,
+                        BoardImage = "https://surf-ski.dk/media/catalog/product/cache/7/thumbnail/256x/9df78eab33525d08d6e5fb8d27136e95/b/i/bic_5_10x.jpg"
                     },
 
                     new BoardPost
@@ -66,7 +69,8 @@ namespace SurfBoardManager.Models
                         Volume = 259,
                         BoardType = BoardPost.Type.Shortboard,
                         Equipment = "Midget",
-                        Price = 426
+                        Price = 426,
+                        BoardImage = "https://surf-ski.dk/media/catalog/product/cache/7/thumbnail/256x/9df78eab33525d08d6e5fb8d27136e95/b/i/bic_5_10x.jpg"
                     }
                 ); ;
                 context.SaveChanges();

@@ -13,19 +13,22 @@
     <a asp-action="Create">Create New</a>
 </p>
 <div class="posts-outer-wrapper">
-    @foreach (var item in Model) {
-        <div class="wrapper">
-            <div class="edit">
-                <a asp-action="Edit" asp-route-id="@item.Id"><img src="https://www.androidicons.com/assets/images/ai-mdpi-black/ic_action_edit.png"></a>
+    @foreach (var item in Model)
+    {
+            <div class="wrapper">
+                <div class="edit">
+                    <a asp-action="Edit" asp-route-id="@item.Id"><img src="https://www.androidicons.com/assets/images/ai-mdpi-black/ic_action_edit.png"></a>
+                </div>
+                <a asp-action="Details" asp-route-id="@item.Id">
+                <div>
+                    <div class="grid-item">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </div>
+                    <div style="border-radius: 10px; padding: 10px; background-color: white; text-align: center;">
+                        <img style="max-width: 15vw; max-height: 24vh;" src="@item.BoardImage">
+                    </div>
+                </div>
+                </a>
             </div>
-            <a asp-action="Details" asp-route-id="@item.Id">
-            <div>
-                <div class="grid-item">@Html.DisplayFor(modelItem => item.Name)</div>
-            <div>
-                <img style="border-radius: 5%;" src="https://is4-ssl.mzstatic.com/image/thumb/Purple3/v4/f6/93/02/f693023f-dba9-770b-fff6-5d374739f2eb/source/256x256bb.jpg">
-            </div>
-            </div>
-            </a>
-        </div>
     }   
 </div>

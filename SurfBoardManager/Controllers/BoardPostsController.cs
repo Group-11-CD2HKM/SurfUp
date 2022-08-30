@@ -56,7 +56,7 @@ namespace SurfBoardManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price")] BoardPost boardPost)
+        public async Task<IActionResult> Create([Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price, BoardImage")] BoardPost boardPost)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace SurfBoardManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price")] BoardPost boardPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price, BoardImage")] BoardPost boardPost)
         {
             if (id != boardPost.Id)
             {
