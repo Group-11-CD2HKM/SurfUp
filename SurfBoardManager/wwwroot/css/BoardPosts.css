@@ -1,0 +1,32 @@
+﻿body {
+    
+}
+
+.wrapper {
+    margin: 20px;
+    width: max-content;
+    padding: 10px;
+    background-color: darkcyan;
+    float: left;
+    border-radius: 5%;
+}
+
+.posts-outer-wrapper {
+    width: 84.5vw;
+}
+
+.grid-item {
+    margin: 0px 0px 10px 5px;
+    text-align: center;
+    font-family: TechnicBold;
+    color: sandybrown;
+}
+
+.edit{
+    float: right;
+    margin-bottom: -20px;
+}
+
+.edit:hover{
+    color: darkblue;
+}
