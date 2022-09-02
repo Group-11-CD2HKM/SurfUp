@@ -12,8 +12,8 @@ using SurfBoardManager.Data;
 namespace SurfBoardManager.Migrations
 {
     [DbContext(typeof(SurfBoardManagerContext))]
-    [Migration("20220902084716_AddIdentity")]
-    partial class AddIdentity
+    [Migration("20220902110115_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -244,6 +244,9 @@ namespace SurfBoardManager.Migrations
                     b.Property<string>("Equipment")
                         .IsRequired()
                         .HasColumnType("NVarChar(255)");
+
+                    b.Property<bool>("IsRented")
+                        .HasColumnType("BIT");
 
                     b.Property<decimal>("Length")
                         .HasColumnType("decimal(18,2)");
