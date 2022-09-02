@@ -20,10 +20,29 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET: BoardPosts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string min, string max)
         {
-              return _context.BoardPost != null ? 
-                          View(await _context.BoardPost.ToListAsync()) :
+
+            var boardPosts = from b in _context.BoardPost
+                             select b;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                boardPosts = boardPosts.Where(b => b.Name.Contains(searchString));
+            }
+ 
+            if (!string.IsNullOrEmpty(min))
+            {
+                boardPosts = boardPosts.Where(b => b.Price > decimal.Parse(min));
+            }
+
+            if (!string.IsNullOrEmpty(max))
+            {
+                boardPosts = boardPosts.Where(b => b.Price < decimal.Parse(max));
+            }
+
+            return _context.BoardPost != null ?
+                          View(await boardPosts.ToListAsync()) :
                           Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");
         }
 
@@ -150,14 +169,14 @@ namespace SurfBoardManager.Controllers
             {
                 _context.BoardPost.Remove(boardPost);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BoardPostExists(int id)
         {
-          return (_context.BoardPost?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.BoardPost?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -7,7 +7,39 @@
 @System.Globalization.CultureInfo.CurrentUICulture
 
 <link rel="stylesheet" href="/css/BoardPosts.css" />
-<h1>Index</h1>
+<h1>Boards</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <form asp-controller="BoardPosts" asp-action="Index" class="form-inline" method="get">
+                <h6>Navn</h6>
+                <input class="form-control mr-sm-2" placeholder="Search" aria-label="Search" name="SearchString">
+                    <h6>Min pris</h6>
+                    <select name="min">
+                        <option>0</option>
+                        <option>200</option>
+                        <option>500</option>
+                        <option>1000</option>
+                        <option>2000</option>
+                    </select>
+                    <h6>Maks pris</h6>
+                    <select name="max">
+                        <option>0</option>
+                        <option>200</option>
+                        <option>500</option>
+                        <option>1000</option>
+                        <option selected="selected">2000</option>
+                   </select>            
+                <button class="btn btn-primary" type="submit">Søg</button>
+            </form>
+        </div>
+        <div class="col-sm">
+        </div>
+        <div class="col-sm">
+        </div>
+    </div>
+</div>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -15,11 +47,11 @@
 <div class="posts-outer-wrapper">
     @foreach (var item in Model)
     {
-            <div class="wrapper">
-                <div class="edit">
-                    <a asp-action="Edit" asp-route-id="@item.Id"><img src="https://www.androidicons.com/assets/images/ai-mdpi-black/ic_action_edit.png"></a>
-                </div>
-                <a asp-action="Details" asp-route-id="@item.Id">
+        <div class="wrapper">
+            <div class="edit">
+                <a asp-action="Edit" asp-route-id="@item.Id"><img src="https://www.androidicons.com/assets/images/ai-mdpi-black/ic_action_edit.png"></a>
+            </div>
+            <a asp-action="Details" asp-route-id="@item.Id">
                 <div>
                     <div class="grid-item">
                         @Html.DisplayFor(modelItem => item.Name)
@@ -27,8 +59,11 @@
                     <div style="border-radius: 10px; padding: 10px; background-color: white; text-align: center;">
                         <img style="max-width: 15vw; max-height: 24vh;" src="@item.BoardImage">
                     </div>
+                    <div class="grid-item">
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </div>
                 </div>
-                </a>
-            </div>
-    }   
+            </a>
+        </div>
+    }
 </div>
