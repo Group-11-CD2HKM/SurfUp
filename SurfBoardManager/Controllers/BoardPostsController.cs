@@ -30,7 +30,7 @@ namespace SurfBoardManager.Controllers
             {
                 boardPosts = boardPosts.Where(b => b.Name.Contains(searchString));
             }
- 
+
             if (!string.IsNullOrEmpty(min))
             {
                 boardPosts = boardPosts.Where(b => b.Price > decimal.Parse(min));
@@ -44,6 +44,7 @@ namespace SurfBoardManager.Controllers
             return _context.BoardPost != null ?
                           View(await boardPosts.ToListAsync()) :
                           Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");
+        }
         public async Task<IActionResult> Index(int? pageNumber)
         {
             /*return _context.BoardPost != null ?
