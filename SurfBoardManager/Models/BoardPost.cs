@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace SurfBoardManager.Models
 {
@@ -48,12 +49,10 @@ namespace SurfBoardManager.Models
         [Display(Name = "Pris")]
         public decimal Price { get; set; }
 
-        [Column(TypeName = "BIGINT")]
-        [Display(Name = "Udlejningsperiode")]
-        public TimeSpan RentalPeriod { get; set; }
-
-        [Column(TypeName = "BIT")]
-        [Display(Name = "Udlejet")]
-        public bool IsRented { get; set; }    
+        [Column(TypeName = "NVarChar(255)")]
+        [Display(Name = "Billede")]
+        public string BoardImage { get; set; }
+        public DateTime? RentalDate { get; set; }
+        public DateTime? RentalDateEnd { get; set; }
     }
 }

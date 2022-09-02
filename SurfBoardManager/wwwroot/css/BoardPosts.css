@@ -1,10 +1,12 @@
-﻿body {
-    
+﻿.body {
+    background-image: url('https://img.freepik.com/free-photo/beautiful-tropical-beach-sea_74190-6796.jpg?w=2000');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .wrapper {
     margin: 20px;
-    width: max-content;
+    width: 18vw;
     padding: 10px;
     background-color: darkcyan;
     float: left;

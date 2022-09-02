@@ -1,13 +1,18 @@
-﻿using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SurfBoardManager.Data;
 using SurfBoardManager.Models;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
+using SurfBoardManager.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<SurfBoardManagerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SurfBoardManagerContext") ?? throw new InvalidOperationException("Connection string 'SurfBoardManagerContext' not found.")));
+
+builder.Services.AddDefaultIdentity<SurfBoardManagerUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<SurfBoardManagerContext>();
 
 //builder.Services.AddMvc().AddMvcOptions(options => options.ModelBinderProviders.Insert(0, new DecimalModelBinder());
 
@@ -44,11 +49,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();

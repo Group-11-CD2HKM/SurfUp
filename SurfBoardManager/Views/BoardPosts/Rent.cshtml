@@ -1,0 +1,84 @@
+﻿@model SurfBoardManager.Models.RentalViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+<div>
+    <form asp-action="Rent">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="BoardPost.Id" />
+        <div class="form-group">
+            <label asp-for="RentalPeriod" class="control-label"></label>
+            <input asp-for="RentalPeriod" class="form-control" />
+            <span asp-validation-for="RentalPeriod" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Rent" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+<div>
+    <h4>BoardPost</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoardPost.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoardPost.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoardPost.Width)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoardPost.Width)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoardPost.Length)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoardPost.Length)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoardPost.Thickness)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoardPost.Thickness)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoardPost.Volume)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoardPost.Volume)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoardPost.BoardType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoardPost.BoardType)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoardPost.Equipment)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoardPost.Equipment)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoardPost.Price)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoardPost.Price)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BoardPost.BoardImage)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BoardPost.BoardImage)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
