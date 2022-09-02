@@ -23,7 +23,7 @@ namespace SurfBoardManager.Controllers
         public async Task<IActionResult> Index()
         {
               return _context.BoardPost != null ? 
-                          View(await _context.BoardPost.ToListAsync()) :
+                          View(await _context.BoardPost.Where(b => b.IsRented == false).ToListAsync()) :
                           Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");
         }
 
