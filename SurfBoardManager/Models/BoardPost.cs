@@ -90,7 +90,6 @@ namespace SurfBoardManager.Models
         {
             IsRented = false;
         }
-        public DateTime? RentalDateEnd { get; set; }
         public SurfUpUser SurfUpUser { get; set; }
     }
 }
