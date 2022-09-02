@@ -10,18 +10,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
+
 namespace SurfBoardManager.Areas.Identity.Pages.Account
 {
     public class LoginWithRecoveryCodeModel : PageModel
     {
-        private readonly SignInManager<SurfBoardManagerUser> _signInManager;
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
+        private readonly SignInManager<SurfUpUser> _signInManager;
+        private readonly UserManager<SurfUpUser> _userManager;
         private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
         public LoginWithRecoveryCodeModel(
-            SignInManager<SurfBoardManagerUser> signInManager,
-            UserManager<SurfBoardManagerUser> userManager,
+            SignInManager<SurfUpUser> signInManager,
+            UserManager<SurfUpUser> userManager,
             ILogger<LoginWithRecoveryCodeModel> logger)
         {
             _signInManager = signInManager;

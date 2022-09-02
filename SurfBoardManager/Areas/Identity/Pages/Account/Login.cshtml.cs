@@ -14,16 +14,16 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<SurfBoardManagerUser> _signInManager;
+        private readonly SignInManager<SurfUpUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<SurfBoardManagerUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<SurfUpUser> signInManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;

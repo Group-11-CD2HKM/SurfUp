@@ -10,16 +10,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
-        private readonly SignInManager<SurfBoardManagerUser> _signInManager;
+        private readonly UserManager<SurfUpUser> _userManager;
+        private readonly SignInManager<SurfUpUser> _signInManager;
 
-        public ConfirmEmailChangeModel(UserManager<SurfBoardManagerUser> userManager, SignInManager<SurfBoardManagerUser> signInManager)
+        public ConfirmEmailChangeModel(UserManager<SurfUpUser> userManager, SignInManager<SurfUpUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;

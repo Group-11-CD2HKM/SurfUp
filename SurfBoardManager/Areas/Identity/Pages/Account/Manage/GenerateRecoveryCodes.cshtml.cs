@@ -9,17 +9,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
 {
     public class GenerateRecoveryCodesModel : PageModel
     {
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
+        private readonly UserManager<SurfUpUser> _userManager;
         private readonly ILogger<GenerateRecoveryCodesModel> _logger;
 
         public GenerateRecoveryCodesModel(
-            UserManager<SurfBoardManagerUser> userManager,
+            UserManager<SurfUpUser> userManager,
             ILogger<GenerateRecoveryCodesModel> logger)
         {
             _userManager = userManager;

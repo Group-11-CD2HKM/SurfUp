@@ -173,9 +173,9 @@ namespace SurfBoardManager.Controllers
                 return NotFound();
             }
 
-            RentalViewModel rentalViewModel = new RentalViewModel() 
-            { 
-                BoardPost  = boardPost
+            RentalViewModel rentalViewModel = new RentalViewModel()
+            {
+                BoardPost = boardPost
             };
 
             return View(rentalViewModel);
@@ -183,7 +183,7 @@ namespace SurfBoardManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel)
+        public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel, SurfUpUser surfUpUser)
         {
             if (id != rentalViewModel.BoardPost.Id)
             {
@@ -199,13 +199,16 @@ namespace SurfBoardManager.Controllers
             ModelState.Remove("BoardPost.Name");
             ModelState.Remove("BoardPost.Equipment");
             ModelState.Remove("BoardPost.BoardImage");
+            ModelState.Remove("BoardPost.SurfUpUser");
+
+            rentalViewModel.BoardPost.RentalDate = DateTime.Now;
+            rentalViewModel.BoardPost.RentalDateEnd = DateTime.Now.AddDays(rentalViewModel.RentalPeriod);
+            rentalViewModel.BoardPost.SurfUpUser = surfUpUser;
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    rentalViewModel.BoardPost.RentalDate = DateTime.Now;
-                    rentalViewModel.BoardPost.RentalDateEnd = DateTime.Now.AddDays(rentalViewModel.RentalPeriod);
                     _context.Update(rentalViewModel.BoardPost);
                     await _context.SaveChangesAsync();
                 }

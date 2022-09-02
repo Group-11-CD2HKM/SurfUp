@@ -11,20 +11,20 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
-        private readonly SignInManager<SurfBoardManagerUser> _signInManager;
-        private readonly IUserStore<SurfBoardManagerUser> _userStore;
+        private readonly UserManager<SurfUpUser> _userManager;
+        private readonly SignInManager<SurfUpUser> _signInManager;
+        private readonly IUserStore<SurfUpUser> _userStore;
 
         public ExternalLoginsModel(
-            UserManager<SurfBoardManagerUser> userManager,
-            SignInManager<SurfBoardManagerUser> signInManager,
-            IUserStore<SurfBoardManagerUser> userStore)
+            UserManager<SurfUpUser> userManager,
+            SignInManager<SurfUpUser> signInManager,
+            IUserStore<SurfUpUser> userStore)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -70,7 +70,7 @@ namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
                 .ToList();
 
             string passwordHash = null;
-            if (_userStore is IUserPasswordStore<SurfBoardManagerUser> userPasswordStore)
+            if (_userStore is IUserPasswordStore<SurfUpUser> userPasswordStore)
             {
                 passwordHash = await userPasswordStore.GetPasswordHashAsync(user, HttpContext.RequestAborted);
             }

@@ -11,15 +11,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
+        private readonly UserManager<SurfUpUser> _userManager;
 
-        public ConfirmEmailModel(UserManager<SurfBoardManagerUser> userManager)
+        public ConfirmEmailModel(UserManager<SurfUpUser> userManager)
         {
             _userManager = userManager;
         }

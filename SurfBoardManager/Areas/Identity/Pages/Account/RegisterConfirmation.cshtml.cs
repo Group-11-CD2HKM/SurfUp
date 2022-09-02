@@ -11,17 +11,17 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
+        private readonly UserManager<SurfUpUser> _userManager;
         private readonly IEmailSender _sender;
 
-        public RegisterConfirmationModel(UserManager<SurfBoardManagerUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(UserManager<SurfUpUser> userManager, IEmailSender sender)
         {
             _userManager = userManager;
             _sender = sender;

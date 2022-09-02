@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfBoardManager.Data;
 
@@ -11,9 +12,10 @@ using SurfBoardManager.Data;
 namespace SurfBoardManager.Migrations
 {
     [DbContext(typeof(SurfBoardManagerContext))]
-    partial class SurfBoardManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20220902102932_NullAble")]
+    partial class NullAble
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,7 +194,7 @@ namespace SurfBoardManager.Migrations
                     b.Property<DateTime?>("RentalDateEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("SurfUpUserId")
+                    b.Property<string>("RentedById")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Thickness")
@@ -206,7 +208,7 @@ namespace SurfBoardManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SurfUpUserId");
+                    b.HasIndex("RentedById");
 
                     b.ToTable("BoardPost");
                 });
@@ -329,11 +331,11 @@ namespace SurfBoardManager.Migrations
 
             modelBuilder.Entity("SurfBoardManager.Models.BoardPost", b =>
                 {
-                    b.HasOne("SurfBoardManager.Models.SurfUpUser", "SurfUpUser")
+                    b.HasOne("SurfBoardManager.Models.SurfUpUser", "RentedBy")
                         .WithMany("BoardPosts")
-                        .HasForeignKey("SurfUpUserId");
+                        .HasForeignKey("RentedById");
 
-                    b.Navigation("SurfUpUser");
+                    b.Navigation("RentedBy");
                 });
 
             modelBuilder.Entity("SurfBoardManager.Models.SurfUpUser", b =>

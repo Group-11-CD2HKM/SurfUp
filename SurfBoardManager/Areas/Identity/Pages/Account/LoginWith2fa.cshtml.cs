@@ -11,19 +11,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account
 {
     public class LoginWith2faModel : PageModel
     {
-        private readonly SignInManager<SurfBoardManagerUser> _signInManager;
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
+        private readonly SignInManager<SurfUpUser> _signInManager;
+        private readonly UserManager<SurfUpUser> _userManager;
         private readonly ILogger<LoginWith2faModel> _logger;
 
         public LoginWith2faModel(
-            SignInManager<SurfBoardManagerUser> signInManager,
-            UserManager<SurfBoardManagerUser> userManager,
+            SignInManager<SurfUpUser> signInManager,
+            UserManager<SurfUpUser> userManager,
             ILogger<LoginWith2faModel> logger)
         {
             _signInManager = signInManager;
