@@ -20,11 +20,39 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET: BoardPosts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string min, string max)
         {
+
+            var boardPosts = from b in _context.BoardPost
+                             select b;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                boardPosts = boardPosts.Where(b => b.Name.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(min))
+            {
+                boardPosts = boardPosts.Where(b => b.Price > decimal.Parse(min));
+            }
+
+            if (!string.IsNullOrEmpty(max))
+            {
+                boardPosts = boardPosts.Where(b => b.Price < decimal.Parse(max));
+            }
+
             return _context.BoardPost != null ?
-                        View(await _context.BoardPost.ToListAsync()) :
-                        Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");
+                          View(await boardPosts.ToListAsync()) :
+                          Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");
+        }
+        public async Task<IActionResult> Index(int? pageNumber)
+        {
+            /*return _context.BoardPost != null ?
+                        View(await _context.BoardPost.Where(b => b.IsRented == false).ToListAsync()) :
+                        Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");*/
+            int pageSize = 3;
+            return View(await PaginatedList<BoardPost>.CreateAsync(_context.BoardPost.Where(b => b.IsRented == false), pageNumber ?? 1, pageSize));
+
         }
 
         // GET: BoardPosts/Details/5
