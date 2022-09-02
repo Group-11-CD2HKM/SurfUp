@@ -47,5 +47,13 @@ namespace SurfBoardManager.Models
         [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Pris")]
         public decimal Price { get; set; }
+
+        [Column(TypeName = "BIGINT")]
+        [Display(Name = "Udlejningsperiode")]
+        public TimeSpan RentalPeriod { get; set; }
+
+        [Column(TypeName = "BIT")]
+        [Display(Name = "Udlejet")]
+        public bool IsRented { get; set; }    
     }
 }
