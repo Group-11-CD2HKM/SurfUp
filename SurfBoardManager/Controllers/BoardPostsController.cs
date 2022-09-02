@@ -22,9 +22,9 @@ namespace SurfBoardManager.Controllers
         // GET: BoardPosts
         public async Task<IActionResult> Index()
         {
-              return _context.BoardPost != null ? 
-                          View(await _context.BoardPost.ToListAsync()) :
-                          Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");
+            return _context.BoardPost != null ?
+                        View(await _context.BoardPost.ToListAsync()) :
+                        Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");
         }
 
         // GET: BoardPosts/Details/5
@@ -150,14 +150,80 @@ namespace SurfBoardManager.Controllers
             {
                 _context.BoardPost.Remove(boardPost);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BoardPostExists(int id)
         {
-          return (_context.BoardPost?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.BoardPost?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        public async Task<IActionResult> Rent(int? id)
+        {
+            if (id == null || _context.BoardPost == null)
+            {
+                return NotFound();
+            }
+
+            var boardPost = await _context.BoardPost.FindAsync(id);
+            if (boardPost == null)
+            {
+                return NotFound();
+            }
+
+            RentalViewModel rentalViewModel = new RentalViewModel() 
+            { 
+                BoardPost  = boardPost
+            };
+
+            return View(rentalViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel)
+        {
+            if (id != rentalViewModel.BoardPost.Id)
+            {
+                return NotFound();
+            }
+
+            var boardPost = await _context.BoardPost
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            rentalViewModel.BoardPost = boardPost;
+
+            ModelState.Remove("BoardPost");
+            ModelState.Remove("BoardPost.Name");
+            ModelState.Remove("BoardPost.Equipment");
+            ModelState.Remove("BoardPost.BoardImage");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    rentalViewModel.BoardPost.RentalDate = DateTime.Now;
+                    rentalViewModel.BoardPost.RentalDateEnd = DateTime.Now.AddDays(rentalViewModel.RentalPeriod);
+                    _context.Update(rentalViewModel.BoardPost);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BoardPostExists(rentalViewModel.BoardPost.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(rentalViewModel);
+        }
+
     }
 }
