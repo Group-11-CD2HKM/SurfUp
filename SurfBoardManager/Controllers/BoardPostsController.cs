@@ -20,11 +20,14 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET: BoardPosts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-              return _context.BoardPost != null ? 
-                          View(await _context.BoardPost.Where(b => b.IsRented == false).ToListAsync()) :
-                          Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");
+            /*return _context.BoardPost != null ?
+                        View(await _context.BoardPost.Where(b => b.IsRented == false).ToListAsync()) :
+                        Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");*/
+            int pageSize = 3;
+            return View(await PaginatedList<BoardPost>.CreateAsync(_context.BoardPost.Where(b => b.IsRented == false), pageNumber ?? 1, pageSize));
+
         }
 
         // GET: BoardPosts/Details/5
