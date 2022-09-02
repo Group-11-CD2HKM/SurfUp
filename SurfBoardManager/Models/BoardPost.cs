@@ -46,7 +46,7 @@ namespace SurfBoardManager.Models
 
         [Column(TypeName = "NVarChar(255)")]
         [Display(Name = "Udstyr")]
-        public string Equipment { get; set; }
+        public string? Equipment { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Pris")]
@@ -54,7 +54,7 @@ namespace SurfBoardManager.Models
 
         [Column(TypeName = "NVarChar(255)")]
         [Display(Name = "Billede")]
-        public string BoardImage { get; set; }
+        public string? BoardImage { get; set; }
         public DateTime? RentalDate { get; set; }
         DateTime? rentalDateEnd;
         public DateTime? RentalDateEnd 
@@ -90,5 +90,6 @@ namespace SurfBoardManager.Models
         {
             IsRented = false;
         }
+        public SurfUpUser SurfUpUser { get; set; }
     }
 }

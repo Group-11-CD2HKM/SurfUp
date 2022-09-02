@@ -12,19 +12,19 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
 {
     public class EmailModel : PageModel
     {
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
-        private readonly SignInManager<SurfBoardManagerUser> _signInManager;
+        private readonly UserManager<SurfUpUser> _userManager;
+        private readonly SignInManager<SurfUpUser> _signInManager;
         private readonly IEmailSender _emailSender;
 
         public EmailModel(
-            UserManager<SurfBoardManagerUser> userManager,
-            SignInManager<SurfBoardManagerUser> signInManager,
+            UserManager<SurfUpUser> userManager,
+            SignInManager<SurfUpUser> signInManager,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -74,7 +74,7 @@ namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
             public string NewEmail { get; set; }
         }
 
-        private async Task LoadAsync(SurfBoardManagerUser user)
+        private async Task LoadAsync(SurfUpUser user)
         {
             var email = await _userManager.GetEmailAsync(user);
             Email = email;

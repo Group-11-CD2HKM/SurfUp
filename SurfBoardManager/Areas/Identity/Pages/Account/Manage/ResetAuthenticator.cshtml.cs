@@ -8,19 +8,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
 {
     public class ResetAuthenticatorModel : PageModel
     {
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
-        private readonly SignInManager<SurfBoardManagerUser> _signInManager;
+        private readonly UserManager<SurfUpUser> _userManager;
+        private readonly SignInManager<SurfUpUser> _signInManager;
         private readonly ILogger<ResetAuthenticatorModel> _logger;
 
         public ResetAuthenticatorModel(
-            UserManager<SurfBoardManagerUser> userManager,
-            SignInManager<SurfBoardManagerUser> signInManager,
+            UserManager<SurfUpUser> userManager,
+            SignInManager<SurfUpUser> signInManager,
             ILogger<ResetAuthenticatorModel> logger)
         {
             _userManager = userManager;

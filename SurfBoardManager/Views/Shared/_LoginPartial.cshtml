@@ -1,8 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using SurfBoardManager.Areas.Identity.Data
 
-@inject SignInManager<SurfBoardManagerUser> SignInManager
-@inject UserManager<SurfBoardManagerUser> UserManager
+@inject SignInManager<SurfUpUser> SignInManager
+@inject UserManager<SurfUpUser> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))

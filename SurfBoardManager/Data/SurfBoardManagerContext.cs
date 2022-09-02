@@ -4,12 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SurfBoardManager.Areas.Identity.Data;
 using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Data
 {
-    public class SurfBoardManagerContext : IdentityDbContext<SurfBoardManagerUser>
+    public class SurfBoardManagerContext : IdentityDbContext<SurfUpUser>
     {
         public SurfBoardManagerContext (DbContextOptions<SurfBoardManagerContext> options)
             : base(options)

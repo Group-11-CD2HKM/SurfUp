@@ -17,24 +17,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly SignInManager<SurfBoardManagerUser> _signInManager;
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
-        private readonly IUserStore<SurfBoardManagerUser> _userStore;
-        private readonly IUserEmailStore<SurfBoardManagerUser> _emailStore;
+        private readonly SignInManager<SurfUpUser> _signInManager;
+        private readonly UserManager<SurfUpUser> _userManager;
+        private readonly IUserStore<SurfUpUser> _userStore;
+        private readonly IUserEmailStore<SurfUpUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
-            SignInManager<SurfBoardManagerUser> signInManager,
-            UserManager<SurfBoardManagerUser> userManager,
-            IUserStore<SurfBoardManagerUser> userStore,
+            SignInManager<SurfUpUser> signInManager,
+            UserManager<SurfUpUser> userManager,
+            IUserStore<SurfUpUser> userStore,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
         {
@@ -198,27 +198,27 @@ namespace SurfBoardManager.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private SurfBoardManagerUser CreateUser()
+        private SurfUpUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<SurfBoardManagerUser>();
+                return Activator.CreateInstance<SurfUpUser>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(SurfBoardManagerUser)}'. " +
-                    $"Ensure that '{nameof(SurfBoardManagerUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(SurfUpUser)}'. " +
+                    $"Ensure that '{nameof(SurfUpUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
             }
         }
 
-        private IUserEmailStore<SurfBoardManagerUser> GetEmailStore()
+        private IUserEmailStore<SurfUpUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<SurfBoardManagerUser>)_userStore;
+            return (IUserEmailStore<SurfUpUser>)_userStore;
         }
     }
 }

@@ -8,18 +8,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using SurfBoardManager.Areas.Identity.Data;
+using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
 {
     public class TwoFactorAuthenticationModel : PageModel
     {
-        private readonly UserManager<SurfBoardManagerUser> _userManager;
-        private readonly SignInManager<SurfBoardManagerUser> _signInManager;
+        private readonly UserManager<SurfUpUser> _userManager;
+        private readonly SignInManager<SurfUpUser> _signInManager;
         private readonly ILogger<TwoFactorAuthenticationModel> _logger;
 
         public TwoFactorAuthenticationModel(
-            UserManager<SurfBoardManagerUser> userManager, SignInManager<SurfBoardManagerUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
+            UserManager<SurfUpUser> userManager, SignInManager<SurfUpUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
