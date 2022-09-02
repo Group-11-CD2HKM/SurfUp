@@ -54,5 +54,9 @@ namespace SurfBoardManager.Models
         public string BoardImage { get; set; }
         public DateTime? RentalDate { get; set; }
         public DateTime? RentalDateEnd { get; set; }
+
+        [Column(TypeName = "BIT")]
+        [Display(Name = "Udlejet")]
+        public bool IsRented { get; set; }
     }
 }
