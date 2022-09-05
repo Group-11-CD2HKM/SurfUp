@@ -90,6 +90,6 @@ namespace SurfBoardManager.Models
         {
             IsRented = false;
         }
-        public SurfUpUser SurfUpUser { get; set; }
+        public SurfUpUser? SurfUpUser { get; set; }
     }
 }

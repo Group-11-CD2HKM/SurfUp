@@ -19,10 +19,9 @@ namespace SurfBoardManager.Controllers
             _context = context;
         }
 
-        // GET: BoardPosts
-        public async Task<IActionResult> Index(string searchString, string min, string max)
+        // GET
+        public async Task<IActionResult> Index(int? pageNumber, string searchString, string min, string max)
         {
-
             var boardPosts = from b in _context.BoardPost
                              select b;
 
@@ -41,17 +40,8 @@ namespace SurfBoardManager.Controllers
                 boardPosts = boardPosts.Where(b => b.Price < decimal.Parse(max));
             }
 
-            return _context.BoardPost != null ?
-                          View(await boardPosts.ToListAsync()) :
-                          Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");
-        }
-        public async Task<IActionResult> Index(int? pageNumber)
-        {
-            /*return _context.BoardPost != null ?
-                        View(await _context.BoardPost.Where(b => b.IsRented == false).ToListAsync()) :
-                        Problem("Entity set 'SurfBoardManagerContext.BoardPost'  is null.");*/
             int pageSize = 3;
-            return View(await PaginatedList<BoardPost>.CreateAsync(_context.BoardPost.Where(b => b.IsRented == false), pageNumber ?? 1, pageSize));
+            return View(await PaginatedList<BoardPost>.CreateAsync(boardPosts.Where(b => b.IsRented == false), pageNumber ?? 1, pageSize));
 
         }
 
@@ -86,6 +76,8 @@ namespace SurfBoardManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price, BoardImage")] BoardPost boardPost)
         {
+            ModelState.Remove(nameof(SurfUpUser));
+
             if (ModelState.IsValid)
             {
                 _context.Add(boardPost);
