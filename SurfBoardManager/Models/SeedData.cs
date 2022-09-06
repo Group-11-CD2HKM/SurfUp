@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SurfBoardManager.Data;
 using System;
@@ -8,12 +9,57 @@ namespace SurfBoardManager.Models
 {
     public static class SeedData
     {
-        public static void Initialize(IServiceProvider serviceProvider)
+        public async static Task Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new SurfBoardManagerContext(
                 serviceProvider.GetRequiredService<
                     DbContextOptions<SurfBoardManagerContext>>()))
             {
+                
+
+                var roleManager = serviceProvider
+                .GetRequiredService<RoleManager<IdentityRole>>();
+                var roleName = "Admin";
+                IdentityResult result;
+
+                bool roleExist = await roleManager.RoleExistsAsync(roleName);
+
+                if (!roleExist)
+                {
+                    result = await roleManager
+                    .CreateAsync(new IdentityRole(roleName));
+                    if (result.Succeeded)
+                    {
+                        var userManager = serviceProvider
+                            .GetRequiredService<UserManager<SurfUpUser>>();
+                        var config = serviceProvider
+                            .GetRequiredService<IConfiguration>();
+                        var admin = await userManager
+                            .FindByEmailAsync(config["AdminCredentials:Email"]);
+
+                        if (admin == null)
+                        {
+                            admin = new SurfUpUser()
+                            {
+                                UserName = config["AdminCredentials:Email"],
+                                Email = config["AdminCredentials:Email"],
+                                EmailConfirmed = true
+                            };
+                            result = await userManager
+                                .CreateAsync(admin, config["AdminCredentials:Password"]);
+                            if (result.Succeeded)
+                            {
+                                result = await userManager
+                                    .AddToRoleAsync(admin, roleName);
+                                if (!result.Succeeded)
+                                {
+                                    // todo: process errors
+                                }
+                            }
+                        }
+                    }
+                }
+
                 // Look for any movies.
                 if (context.BoardPost.Any())
                 {
@@ -72,7 +118,7 @@ namespace SurfBoardManager.Models
                         Price = 426,
                         BoardImage = "https://surf-ski.dk/media/catalog/product/cache/7/thumbnail/256x/9df78eab33525d08d6e5fb8d27136e95/b/i/bic_5_10x.jpg"
                     }
-                ); ;
+                );
                 context.SaveChanges();
             }
         }

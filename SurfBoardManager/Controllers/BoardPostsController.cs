@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SurfBoardManager.Data;
 using SurfBoardManager.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SurfBoardManager.Controllers
 {
     public class BoardPostsController : Controller
     {
         private readonly SurfBoardManagerContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public BoardPostsController(SurfBoardManagerContext context)
+        public BoardPostsController(SurfBoardManagerContext context, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _roleManager = roleManager;
         }
 
         // GET
@@ -72,6 +76,7 @@ namespace SurfBoardManager.Controllers
         // POST: BoardPosts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = "RequiredAdminRole")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price, BoardImage")] BoardPost boardPost)
@@ -88,6 +93,7 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET: BoardPosts/Edit/5
+        [Authorize(Policy = "RequiredAdminRole")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.BoardPost == null)
@@ -106,6 +112,7 @@ namespace SurfBoardManager.Controllers
         // POST: BoardPosts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = "RequiredAdminRole")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price, BoardImage")] BoardPost boardPost)
@@ -139,6 +146,7 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET: BoardPosts/Delete/5
+        [Authorize(Policy = "RequiredAdminRole")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.BoardPost == null)
@@ -157,6 +165,7 @@ namespace SurfBoardManager.Controllers
         }
 
         // POST: BoardPosts/Delete/5
+        [Authorize(Policy ="RequiredAdminRole")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

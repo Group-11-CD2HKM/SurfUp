@@ -48,9 +48,12 @@
     @foreach (var item in Model)
     {
         <div class="wrapper">
-            <div class="edit">
-                <a asp-action="Edit" asp-route-id="@item.Id"><img src="https://www.androidicons.com/assets/images/ai-mdpi-black/ic_action_edit.png"></a>
-            </div>
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="edit">
+                    <a asp-action="Edit" asp-route-id="@item.Id"><img src="https://www.androidicons.com/assets/images/ai-mdpi-black/ic_action_edit.png"></a>
+                </div>
+            }
             <a asp-action="Details" asp-route-id="@item.Id">
                 <div>
                     <div class="grid-item">
