@@ -42,7 +42,10 @@
 </div>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create">Create New</a>
+    }
 </p>
 <div class="posts-outer-wrapper">
     @foreach (var item in Model)

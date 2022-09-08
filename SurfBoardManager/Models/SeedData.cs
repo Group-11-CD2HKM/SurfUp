@@ -60,7 +60,7 @@ namespace SurfBoardManager.Models
                     }
                 }
 
-                // Look for any movies.
+                // Look for any BoardPosts.
                 if (context.BoardPost.Any())
                 {
                     return;   // DB has been seeded

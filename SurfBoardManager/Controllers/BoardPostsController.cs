@@ -67,6 +67,7 @@ namespace SurfBoardManager.Controllers
             return View(boardPost);
         }
 
+        [Authorize(Policy = "RequiredAdminRole")]
         // GET: BoardPosts/Create
         public IActionResult Create()
         {
