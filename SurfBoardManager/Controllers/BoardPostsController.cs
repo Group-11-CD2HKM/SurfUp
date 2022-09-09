@@ -45,7 +45,7 @@ namespace SurfBoardManager.Controllers
             }
 
             int pageSize = 3;
-            return View(await PaginatedList<BoardPost>.CreateAsync(boardPosts.Where(b => b.IsRented == false), pageNumber ?? 1, pageSize));
+            return View(await PaginatedList<BoardPost>.CreateAsync(boardPosts.Where(b => b.RentalDateEnd == null || (DateTime.Compare((DateTime)b.RentalDateEnd, DateTime.Now)) < 0 ), pageNumber ?? 1, pageSize));
 
         }
 
