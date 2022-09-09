@@ -14,13 +14,15 @@ namespace SurfBoardManager.Controllers
 {
     public class BoardPostsController : Controller
     {
+        private readonly UserManager<SurfUpUser> _userManager;
         private readonly SurfBoardManagerContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public BoardPostsController(SurfBoardManagerContext context, RoleManager<IdentityRole> roleManager)
+        public BoardPostsController(SurfBoardManagerContext context, RoleManager<IdentityRole> roleManager, UserManager<SurfUpUser> userManager)
         {
             _context = context;
             _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         // GET
@@ -190,6 +192,7 @@ namespace SurfBoardManager.Controllers
             return (_context.BoardPost?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+        [Authorize]
         public async Task<IActionResult> Rent(int? id)
         {
             if (id == null || _context.BoardPost == null)
@@ -211,10 +214,13 @@ namespace SurfBoardManager.Controllers
             return View(rentalViewModel);
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel, SurfUpUser surfUpUser)
+        public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel)
         {
+            var surfUpUser = await _userManager.GetUserAsync(User);
+
             if (id != rentalViewModel.BoardPost.Id)
             {
                 return NotFound();
@@ -257,6 +263,5 @@ namespace SurfBoardManager.Controllers
             }
             return View(rentalViewModel);
         }
-
     }
 }
