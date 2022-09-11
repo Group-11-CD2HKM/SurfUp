@@ -15,6 +15,16 @@ namespace SurfBoardManager.Models
 
         public int Id { get; set; }
 
+        //Brugen af DataAnnotation bruges til at validere user input og begrænse hvad bruger kan skrive.
+        //Giver forhøjet sikkerhed, da brugeren ikke kan bruge kode som input.
+
+        //RegularExpression = tilader kun input af (A-Z), (a-z) og ingen specialtegn for "navn".
+        //Defineret i parameteren af Regularexpression som også indeholder en error message hvis andet er brugt som input.
+
+        //Column(TypeName) = Fortæller input feltet hvilken type som forventes.
+
+        //DIsplayName = Giver View'et visning af feltet et navn når feltet ikke er blevet brugt endnu.
+
         [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$", 
         ErrorMessage = "Må kun indeholde bogstaver(stort startbogstav) (A-Z), ingen specialtegn (*/.?) undtagen mellemrum.")]
         [Column(TypeName = "NVarChar(255)")]
@@ -54,6 +64,8 @@ namespace SurfBoardManager.Models
         public string? BoardImage { get; set; }
         public DateTime? RentalDate { get; set; }
         DateTime? rentalDateEnd;
+
+        //Get henter "rentalDateEnd" og retunere denne. Set giver "rentalDateEnd" en værdig og kalder på metoden "SetIsRentedStatus"
         public DateTime? RentalDateEnd 
         {
             get { return rentalDateEnd; }
@@ -67,6 +79,7 @@ namespace SurfBoardManager.Models
         [Display(Name = "Udlejet")]
         public bool IsRented { get; set; }
 
+        //Metoden sætter "IsRented" til at være sandt, når den bliver kaldt.
         private void SetIsRentedStatus()
         {
             IsRented = true;

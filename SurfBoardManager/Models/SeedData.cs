@@ -9,23 +9,31 @@ namespace SurfBoardManager.Models
 {
     public static class SeedData
     {
+
+        //Metoden her, bliver kørt når programmet starter og lavet 2 checks.
+        //først checker den om vi har en registeret admin i vores database og hvis ikke opretter den en default admin.
+        //Anden check er om databasen indeholder nogle boardpost, og hvis opretter den nogle.
         public async static Task Initialize(IServiceProvider serviceProvider)
         {
+           
+            //Henter data'en fra databasen og gemmer dette i "context" variablen.
             using (var context = new SurfBoardManagerContext(
                 serviceProvider.GetRequiredService<
                     DbContextOptions<SurfBoardManagerContext>>()))
             {
                 
-
+                //Sætter "roleManager" variable til typen "RoleManager" med type parameter af "IdentityRole"
                 var roleManager = serviceProvider
                 .GetRequiredService<RoleManager<IdentityRole>>();
                 var roleName = "Admin";
                 IdentityResult result;
 
+                //checker om "roleManager" har en existerende "Admin" bruger
                 bool roleExist = await roleManager.RoleExistsAsync(roleName);
 
                 if (!roleExist)
                 {
+                    //Ópretter en ny admin bruger, hvis ingen bruger har en admin rolle. 
                     result = await roleManager
                     .CreateAsync(new IdentityRole(roleName));
                     if (result.Succeeded)
@@ -60,12 +68,13 @@ namespace SurfBoardManager.Models
                     }
                 }
 
-                // Look for any BoardPosts.
+                // Leder efter boardpost.
                 if (context.BoardPost.Any())
                 {
                     return;   // DB has been seeded
                 }
 
+                //Fylder databasen med 3 default boardpost, hvis ingen var fundet.
                 context.BoardPost.AddRange(
                     new BoardPost
                     {
