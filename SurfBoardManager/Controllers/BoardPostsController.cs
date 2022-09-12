@@ -12,11 +12,15 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace SurfBoardManager.Controllers
 {
+
     public class BoardPostsController : Controller
     {
+        // Alloker variabler til rollerstyring og context (database).
         private readonly SurfBoardManagerContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        // Constructoren kaldes når vi får requests fra vores klient og en controller skabes.
+        // Aps sørger for at injecte context og rolemanager som fungerer.
         public BoardPostsController(SurfBoardManagerContext context, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
@@ -24,16 +28,24 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET
+        // Index metoden som viser vores boards, pageNumber viser hvilken side vores paginated list er på, searchString bruges
+        // til at filtrere i navnene og min og max bruges til at filtrere inden for et pris interval.
         public async Task<IActionResult> Index(int? pageNumber, string searchString, string min, string max)
         {
+            // LINQ statement som henter alt i BoardPost table.
             var boardPosts = from b in _context.BoardPost
                              select b;
 
+            // Guard som sikrer at stringen er brugbar (ikke null eller tom)
             if (!string.IsNullOrEmpty(searchString))
             {
+                // Kører lambda funktion for at filtrere listen
+                // b er input variablen (csharp gætter sig til variabl typen)
+                // b.Name.Contains bruges til at filtrerre listen afhængig af searchStrings værdi.
                 boardPosts = boardPosts.Where(b => b.Name.Contains(searchString));
             }
 
+            // as above so below.
             if (!string.IsNullOrEmpty(min))
             {
                 boardPosts = boardPosts.Where(b => b.Price > decimal.Parse(min));
@@ -44,7 +56,10 @@ namespace SurfBoardManager.Controllers
                 boardPosts = boardPosts.Where(b => b.Price < decimal.Parse(max));
             }
 
+            // Page size er hvor mange surfboards vi kan vise på vores paginated side.
             int pageSize = 3;
+            // Filtrer lejede boards, tjek om pageNumber er null (hvis den er null,
+            // så start visning på side 1, ellers så brug værdien i pageNumber), brug pagesize.
             return View(await PaginatedList<BoardPost>.CreateAsync(boardPosts.Where(b => b.IsRented == false), pageNumber ?? 1, pageSize));
 
         }
