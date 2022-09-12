@@ -60,8 +60,7 @@ namespace SurfBoardManager.Controllers
             int pageSize = 3;
             // Filtrer lejede boards, tjek om pageNumber er null (hvis den er null,
             // så start visning på side 1, ellers så brug værdien i pageNumber), brug pagesize.
-            return View(await PaginatedList<BoardPost>.CreateAsync(boardPosts.Where(b => b.IsRented == false), pageNumber ?? 1, pageSize));
-
+            return View(await PaginatedList<BoardPost>.CreateAsync(boardPosts.Where(b => b.RentalDateEnd == null || (DateTime.Compare((DateTime)b.RentalDateEnd, DateTime.Now)) < 0), pageNumber ?? 1, pageSize));
         }
 
         // GET: BoardPosts/Details/5
@@ -82,6 +81,7 @@ namespace SurfBoardManager.Controllers
             return View(boardPost);
         }
 
+        [Authorize(Policy = "RequiredAdminRole")]
         // GET: BoardPosts/Create
         public IActionResult Create()
         {
