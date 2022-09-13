@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SurfBoardManager.Controllers;
+using SurfBoardManager.Data;
 using SurfBoardManager.Models;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
@@ -18,15 +21,18 @@ namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<SurfUpUser> _userManager;
         private readonly SignInManager<SurfUpUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly SurfBoardManagerContext _context;
 
         public DeletePersonalDataModel(
             UserManager<SurfUpUser> userManager,
             SignInManager<SurfUpUser> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
+            ILogger<DeletePersonalDataModel> logger,
+            SurfBoardManagerContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _context = context;
         }
 
         /// <summary>
@@ -86,18 +92,24 @@ namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
                     return Page();
                 }
             }
+            var boardPosts = _context.BoardPost.Include("SurfUpUser").Where(p => p.SurfUpUser.Id == user.Id).ToList();
 
+            foreach (var item in boardPosts)
+            {
+                item.SurfUpUser = null;
+                item.IsRented = false;
+                item.RentalDate = item.RentalDateEnd;
+            }
+            await _context.SaveChangesAsync();
             var result = await _userManager.DeleteAsync(user);
             var userId = await _userManager.GetUserIdAsync(user);
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException($"Unexpected error occurred deleting user.");
             }
-
             await _signInManager.SignOutAsync();
 
             _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
-
             return Redirect("~/");
         }
     }

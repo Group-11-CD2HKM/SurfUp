@@ -13,7 +13,8 @@ builder.Services.AddDbContext<SurfBoardManagerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SurfBoardManagerContext") ?? throw new InvalidOperationException("Connection string 'SurfBoardManagerContext' not found.")));
 
 builder.Services.AddIdentity<SurfUpUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<SurfBoardManagerContext>().AddDefaultUI();
+    .AddEntityFrameworkStores<SurfBoardManagerContext>().AddDefaultUI()
+    .AddTokenProvider<DataProtectorTokenProvider<SurfUpUser>>(TokenOptions.DefaultProvider);
 
 builder.Services.AddAuthorization(options => options.AddPolicy("RequiredAdminRole", policy => policy.RequireRole("Admin")));
 

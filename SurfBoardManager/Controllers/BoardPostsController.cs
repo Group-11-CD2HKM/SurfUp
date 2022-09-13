@@ -15,16 +15,19 @@ namespace SurfBoardManager.Controllers
 
     public class BoardPostsController : Controller
     {
+        private readonly UserManager<SurfUpUser> _userManager;
         // Alloker variabler til rollerstyring og context (database).
         private readonly SurfBoardManagerContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        public BoardPostsController(SurfBoardManagerContext context, RoleManager<IdentityRole> roleManager, UserManager<SurfUpUser> userManager)
         //Opretter BoardPostController objekt som tager SurBoardManagerContext og RoleManager med type parameter IdentityRole som parameter.
         // Parametrene bliver injected af Asp.net, så længe de er registreret som en service i program.cs
-        public BoardPostsController(SurfBoardManagerContext context, RoleManager<IdentityRole> roleManager)
+
         {
             _context = context;
             _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         // HTTPS GET metode
@@ -240,6 +243,7 @@ namespace SurfBoardManager.Controllers
             return (_context.BoardPost?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+        [Authorize]
         public async Task<IActionResult> Rent(int? id)
         {
             // Sætter rentalViewModel op og injecter den i Rent viewet.
@@ -262,11 +266,12 @@ namespace SurfBoardManager.Controllers
             return View(rentalViewModel);
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // 
-        public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel, SurfUpUser surfUpUser)
+        public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel)
         {
+            var surfUpUser = await _userManager.GetUserAsync(User);
             // Error checking. Maybe som user got here by accident or w.e.
             if (rentalViewModel.BoardPost is null || id != rentalViewModel.BoardPost.Id)
             {
@@ -313,6 +318,5 @@ namespace SurfBoardManager.Controllers
             }
             return View(rentalViewModel);
         }
-
     }
 }
