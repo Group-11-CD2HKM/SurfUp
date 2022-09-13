@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace SurfBoardManager.Models
 {
+    // Static class holding an Initialize method, which is used when initializing the database for the first time.
     public static class SeedData
     {
 

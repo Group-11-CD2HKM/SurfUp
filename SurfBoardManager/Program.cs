@@ -15,7 +15,6 @@ builder.Services.AddDbContext<SurfBoardManagerContext>(options =>
 builder.Services.AddIdentity<SurfUpUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<SurfBoardManagerContext>().AddDefaultUI();
 
-
 builder.Services.AddAuthorization(options => options.AddPolicy("RequiredAdminRole", policy => policy.RequireRole("Admin")));
 
 builder.Services.AddRazorPages();
@@ -27,14 +26,15 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();  
 
-var defaultCulture = new CultureInfo("da-DK");
-var localizationOptions = new RequestLocalizationOptions
-{
-    DefaultRequestCulture = new RequestCulture(defaultCulture),
-    SupportedCultures = new List<CultureInfo> { defaultCulture },
-    SupportedUICultures = new List<CultureInfo> { defaultCulture }
-};
-app.UseRequestLocalization(localizationOptions);
+// Culture gøgl, virker ikke.
+//var defaultCulture = new CultureInfo("da-DK");
+//var localizationOptions = new RequestLocalizationOptions
+//{
+//    DefaultRequestCulture = new RequestCulture(defaultCulture),
+//    SupportedCultures = new List<CultureInfo> { defaultCulture },
+//    SupportedUICultures = new List<CultureInfo> { defaultCulture }
+//};
+//app.UseRequestLocalization(localizationOptions);
 
 
 //Seeder databasen, hvis denne er tom.

@@ -6,16 +6,13 @@ using System;
 
 namespace SurfBoardManager.Models
 {
-
-    //[ModelBinder(BinderType = typeof(DecimalModelBinder))]
-
     public class BoardPost
     {
         public enum Type { Shortboard, Funboard, Fish, Longboard, SUP };
 
         public int Id { get; set; }
 
-        //Brugen af DataAnnotation bruges til at validere user input og begrænse hvad bruger kan skrive.
+        //DataAnnotation bruges til at validere user input og begrænse hvad bruger kan skrive.
         //Giver forhøjet sikkerhed, da brugeren ikke kan bruge kode som input.
 
         //RegularExpression = tilader kun input af (A-Z), (a-z) og ingen specialtegn for "navn".
@@ -23,7 +20,7 @@ namespace SurfBoardManager.Models
 
         //Column(TypeName) = Fortæller input feltet hvilken type som forventes.
 
-        //DIsplayName = Giver View'et visning af feltet et navn når feltet ikke er blevet brugt endnu.
+        //DisplayName = Giver View'et visning af feltet et navn når feltet ikke er blevet brugt endnu.
 
         [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$", 
         ErrorMessage = "Må kun indeholde bogstaver(stort startbogstav) (A-Z), ingen specialtegn (*/.?) undtagen mellemrum.")]
