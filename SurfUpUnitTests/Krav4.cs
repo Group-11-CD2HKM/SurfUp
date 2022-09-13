@@ -1,10 +1,21 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Sqlite;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using SurfBoardManager.Controllers;
 using SurfBoardManager.Data;
 using SurfBoardManager.Models;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Builder;
+using System;
+using Microsoft.Data.Sqlite;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using System.Security.Principal;
 
 namespace SurfUpUnitTests
 {
@@ -15,6 +26,8 @@ namespace SurfUpUnitTests
         SurfBoardManagerContext _context;
         RoleManager<IdentityRole> _roleManager;
         BoardPostsController _boardPostsController;
+        IHttpContextAccessor _httpContextAccessor;
+        HttpContext _httpContext;
 
         private List<SurfUpUser> _users = new List<SurfUpUser>
          {
@@ -29,21 +42,82 @@ namespace SurfUpUnitTests
          };
 
         [TestInitialize]
-        public void Init()
+        public async Task Init()
         {
-            var _contextOptions = new DbContextOptionsBuilder<SurfBoardManagerContext>()
-                .UseSqlServer("Server=10.56.8.36;Database=DB42;User Id=STUDENT42;Password=OPENDB_42;Trusted_Connection=False;MultipleActiveResultSets=true")
-                .Options;
-            _context = new SurfBoardManagerContext(_contextOptions);
-            _userManager = MockHelper.MockUserManager<SurfUpUser>(_users).Object;
-            _roleManager = MockHelper.MockRoleManager<IdentityRole>(_roles).Object;
-            _userManager.AddToRoleAsync(_users.Last(), "Admin");
-            _boardPostsController = new BoardPostsController(_context,_roleManager,_userManager);
+            //var _contextOptions = new DbContextOptionsBuilder<SurfBoardManagerContext>()
+            //    .UseSqlServer("Server=10.56.8.36;Database=DB42;User Id=STUDENT42;Password=OPENDB_42;Trusted_Connection=False;MultipleActiveResultSets=true")
+            //    .Options;
+            //_context = new SurfBoardManagerContext(_contextOptions);
+            //_userManager = MockHelper.MockUserManager<SurfUpUser>(_users).Object;
+            //_roleManager = MockHelper.MockRoleManager<IdentityRole>(_roles).Object;
+            //_userManager.AddToRoleAsync(_users.Last(), "Admin");
+            //_boardPostsController = new BoardPostsController(_context, _roleManager, _userManager);
 
-            var resetTestModel = _context.BoardPost.Find(1);
-            resetTestModel.RentalDateEnd = null;
-            resetTestModel.IsRented = false;
+            //var resetTestModel = _context.BoardPost.Find(1);
+            //resetTestModel.RentalDateEnd = null;
+            //resetTestModel.IsRented = false;
+
+            // New stuffs 
+            var dbOptionsBuilder = new DbContextOptionsBuilder<SurfBoardManagerContext>();
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
+            //db÷ptionsBuilder.UseSqlite(connection);
+
+            var builder = WebApplication.CreateBuilder();
+
+            //Angiver vores connectionString til databasen 
+            builder.Services.AddDbContext<SurfBoardManagerContext>(options =>
+                options.UseSqlite(connection));
+
+            //using (var ctx = new SurfBoardManagerContext(dbOptionsBuilder.Options))
+            //{
+            //    ctx.Database.EnsureCreated();
+            //}
+
+            builder.Services.AddIdentity<SurfUpUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<SurfBoardManagerContext>()
+                .AddTokenProvider<DataProtectorTokenProvider<SurfUpUser>>(TokenOptions.DefaultProvider);
+
+            builder.Services.AddAuthorization(options => options.AddPolicy("RequiredAdminRole", policy => policy.RequireRole("Admin")));
+
+            builder.Services.AddRazorPages();
+
+            // Add services to the container.
+            builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpContextAccessor();
+
+            var app = builder.Build();
+
+            _context = new SurfBoardManagerContext(
+                app.Services.GetRequiredService<
+                    DbContextOptions<SurfBoardManagerContext>>());
+            _context.Database.EnsureCreated();
+            _roleManager = app.Services
+                .GetRequiredService<RoleManager<IdentityRole>>();
+            _userManager = app.Services
+                            .GetRequiredService<UserManager<SurfUpUser>>();
+            _httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
+
+            var identity = new GenericIdentity("test@test.dk", "test");
+            var contextUser = new ClaimsPrincipal(identity); //add claims as needed
+
+            //...then set user and other required properties on the httpContext as needed
+            _httpContext = new DefaultHttpContext()
+            {
+                User = contextUser
+            };
+
+            _boardPostsController = new BoardPostsController(_context, _roleManager, _userManager, _httpContextAccessor);
+            _httpContextAccessor.HttpContext = _httpContext;
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                await SeedData.Initialize(services);
+            }
         }
+
         [TestMethod]
         public async Task RentIdBoardGet()
         {
@@ -58,6 +132,8 @@ namespace SurfUpUnitTests
         [TestMethod]
         public async Task RentIdBoardPost()
         {
+            _httpContextAccessor.HttpContext = _httpContext; // Resets for some reason, so we set it here again?
+
             var getView = (await _boardPostsController.Rent(1) as ViewResult);
             RentalViewModel getModel = getView.Model as RentalViewModel;
 

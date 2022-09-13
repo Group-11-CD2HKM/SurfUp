@@ -66,6 +66,20 @@ namespace SurfBoardManager.Models
                                 }
                             }
                         }
+
+                        var user = await userManager
+                           .FindByEmailAsync("test@test.dk");
+                        if (user == null)
+                        {
+                            user = new SurfUpUser()
+                            {
+                                UserName = "test@test.dk",
+                                Email = "test@test.dk",
+                                EmailConfirmed = true
+                            };
+                            result = await userManager
+                                .CreateAsync(user, "Test12345!");
+                        }
                     }
                 }
 

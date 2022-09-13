@@ -19,8 +19,13 @@ namespace SurfBoardManager.Controllers
         // Alloker variabler til rollerstyring og context (database).
         private readonly SurfBoardManagerContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BoardPostsController(SurfBoardManagerContext context, RoleManager<IdentityRole> roleManager, UserManager<SurfUpUser> userManager)
+        public BoardPostsController(
+            SurfBoardManagerContext context,
+            RoleManager<IdentityRole> roleManager,
+            UserManager<SurfUpUser> userManager,
+            IHttpContextAccessor httpContextAccessor)
         //Opretter BoardPostController objekt som tager SurBoardManagerContext og RoleManager med type parameter IdentityRole som parameter.
         // Parametrene bliver injected af Asp.net, så længe de er registreret som en service i program.cs
 
@@ -28,6 +33,7 @@ namespace SurfBoardManager.Controllers
             _context = context;
             _roleManager = roleManager;
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // HTTPS GET metode
@@ -271,7 +277,8 @@ namespace SurfBoardManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel)
         {
-            var surfUpUser = await _userManager.GetUserAsync(User);
+            var _user = _httpContextAccessor.HttpContext.User;
+            var surfUpUser = await _userManager.FindByEmailAsync(_user.Identity.Name);
             // Error checking. Maybe som user got here by accident or w.e.
             if (rentalViewModel.BoardPost is null || id != rentalViewModel.BoardPost.Id)
             {
@@ -301,6 +308,7 @@ namespace SurfBoardManager.Controllers
                 try
                 {
                     _context.Update(rentalViewModel.BoardPost);
+                    _context.Attach(surfUpUser); // Required when using sqlite?
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
