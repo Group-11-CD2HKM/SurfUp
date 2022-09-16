@@ -123,6 +123,8 @@ namespace SurfBoardManager.Controllers
             // så tjek om propertyen egentligt skal være nullable i modellen?
             // ModelState.Remove(nameof(SurfUpUser));
 
+            ModelState.Remove("RowVersion");
+
             if (ModelState.IsValid)
             {
                 //Tilføjer boardPost til vores context.
@@ -146,7 +148,8 @@ namespace SurfBoardManager.Controllers
                 return NotFound();
             }
 
-            var boardPost = await _context.BoardPost.FindAsync(id);
+            var boardPost = await _context.BoardPost.AsNoTracking().FirstOrDefaultAsync(g => g.Id == id);
+
             if (boardPost == null)
             {
                 return NotFound();
@@ -161,7 +164,7 @@ namespace SurfBoardManager.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //Edit metoden, lader en bruger med admin rettigheder ændre på boardpostens data.
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price, BoardImage")] BoardPost boardPost)
+        public async Task<IActionResult> Edit(int id,[Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price,BoardImage,RowVersion")] BoardPost boardPost)
         {
             //checker om boardPost id'et matcher overens med input id'et.
             if (id != boardPost.Id)
@@ -169,32 +172,100 @@ namespace SurfBoardManager.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var boardPostToBeUpdated = await _context.BoardPost.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(boardPostToBeUpdated == null)
+            {
+                BoardPost deletedBoardPost = new BoardPost();
+                await TryUpdateModelAsync(deletedBoardPost);
+                ModelState.AddModelError("", "Board ændringer kan ikke gemmes. En anden bruger har slettet boarded");
+                return View(deletedBoardPost);
+            }
+
+            _context.Entry(boardPostToBeUpdated).Property("RowVersion").OriginalValue = boardPost.RowVersion;
+
+            
+
+            if (await TryUpdateModelAsync<BoardPost>(boardPostToBeUpdated, "", 
+                b => b.Name,
+                b => b.Length,
+                b => b.Thickness,
+                b => b.Volume,
+                b => b.BoardType,
+                b => b.Equipment,
+                b => b.Price,
+                b => b.Width,
+                b => b.BoardImage,
+                b => b.IsRented
+                ))
             {
                 try
                 {
-                    // Genoptager tracking af boardPost objektet
-                    // og gemmer ændringerne i databasen.
-                    _context.Update(boardPost);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                // Hvis flere brugere forsøgte at ændre i databasen på samme tid, så vil den første bruger "få ret"
-                // og vi får i stedet en "dbupdateConcurrencyexecption". Hvis boardPosten er blevet slettet i mellemtiden,
-                // så redirectes vi til notfound viewt. Ellser kaster vi exception igen.
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
-                    if (!BoardPostExists(boardPost.Id))
+                    var exceptionEntry = ex.Entries.Single();
+                    var clientValues = (BoardPost)exceptionEntry.Entity;
+                    var databaseEntry = exceptionEntry.GetDatabaseValues();
+
+                    if(databaseEntry == null)
                     {
-                        return NotFound();
+                        ModelState.AddModelError("", "Board ændringer kan ikke gemmes. En anden bruger har slettet boarded");
                     }
                     else
                     {
-                        throw;
+                        var databaseValue = (BoardPost)databaseEntry.ToObject();
+
+                        #region Fejlmeddelelser for hver textbox i view
+                        if (clientValues.Name != databaseValue.Name)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Name}");
+                        }
+                        if (clientValues.Length != databaseValue.Length)
+                        {
+                            ModelState.AddModelError("Length", $"Nuværende værdi: {databaseValue.Length}");
+                        }
+                        if (clientValues.Width != databaseValue.Width)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Width}");
+                        }
+                        if (clientValues.Volume != databaseValue.Volume)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Volume}");
+                        }
+                        if (clientValues.Thickness != databaseValue.Thickness)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Thickness}");
+                        }
+                        if (clientValues.BoardType != databaseValue.BoardType)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.BoardType}");
+                        }
+                        if (clientValues.BoardImage != databaseValue.BoardImage)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.BoardImage}");
+                        }
+                        if (clientValues.Price != databaseValue.Price)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Price}");
+                        }
+                        if (clientValues.Equipment != databaseValue.Equipment)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Equipment}");
+                        }
+                        #endregion
+
+                        ModelState.AddModelError("", "Kunne ikke gemme ændringerne." +
+                            "En anden bruger har i mellemtiden lavet ændringer i dette board." +
+                            "Ædringerne er vist i textboksene. Click på Save igen, for at gemme dine ændringer");
+                        boardPostToBeUpdated.RowVersion = (byte[])databaseValue.RowVersion;
+                        ModelState.Remove("RowVersion");
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(boardPost);
+            return View(boardPostToBeUpdated);
         }
 
         // GET: BoardPosts/Delete/5

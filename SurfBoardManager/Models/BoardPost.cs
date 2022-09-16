@@ -76,6 +76,9 @@ namespace SurfBoardManager.Models
         [Display(Name = "Udlejet")]
         public bool IsRented { get; set; }
 
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
         //Metoden sætter "IsRented" til at være sandt, når den bliver kaldt.
         private void SetIsRentedStatus()
         {
