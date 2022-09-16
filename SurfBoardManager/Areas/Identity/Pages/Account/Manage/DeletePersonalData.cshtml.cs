@@ -96,9 +96,7 @@ namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
 
             foreach (var item in boardPosts)
             {
-                item.SurfUpUser = null;
-                item.IsRented = false;
-                item.RentalDate = item.RentalDateEnd;
+                item.UnRent();
             }
             await _context.SaveChangesAsync();
             var result = await _userManager.DeleteAsync(user);

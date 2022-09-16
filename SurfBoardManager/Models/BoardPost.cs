@@ -78,12 +78,19 @@ namespace SurfBoardManager.Models
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
+        public SurfUpUser? SurfUpUser { get; set; }
+
 
         //Metoden sætter "IsRented" til at være sandt, når den bliver kaldt.
         private void SetIsRentedStatus()
         {
             IsRented = true;
         }
-        public SurfUpUser? SurfUpUser { get; set; }
+        public void UnRent()
+        {
+            RentalDateEnd = DateTime.Now;
+            SurfUpUser = null;
+            IsRented = false;
+        }
     }
 }
