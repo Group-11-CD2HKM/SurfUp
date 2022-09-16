@@ -16,7 +16,6 @@ builder.Services.AddIdentity<SurfUpUser, IdentityRole>(options => options.SignIn
     .AddEntityFrameworkStores<SurfBoardManagerContext>().AddDefaultUI()
     .AddTokenProvider<DataProtectorTokenProvider<SurfUpUser>>(TokenOptions.DefaultProvider);
 
-builder.Services.AddAuthorization(options => options.AddPolicy("RequiredAdminRole", policy => policy.RequireRole("Admin")));
 
 builder.Services.AddRazorPages();
 
