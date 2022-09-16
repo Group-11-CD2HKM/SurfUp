@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Angiver vores connectionString til databasen 
 builder.Services.AddDbContext<SurfBoardManagerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SurfBoardManagerContext") ?? throw new InvalidOperationException("Connection string 'SurfBoardManagerContext' not found.")));
 
 builder.Services.AddIdentity<SurfUpUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<SurfBoardManagerContext>().AddDefaultUI();
-
+    .AddEntityFrameworkStores<SurfBoardManagerContext>().AddDefaultUI()
+    .AddTokenProvider<DataProtectorTokenProvider<SurfUpUser>>(TokenOptions.DefaultProvider);
 
 builder.Services.AddAuthorization(options => options.AddPolicy("RequiredAdminRole", policy => policy.RequireRole("Admin")));
 
@@ -23,18 +24,22 @@ builder.Services.AddRazorPages();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();  
 
-var defaultCulture = new CultureInfo("da-DK");
-var localizationOptions = new RequestLocalizationOptions
-{
-    DefaultRequestCulture = new RequestCulture(defaultCulture),
-    SupportedCultures = new List<CultureInfo> { defaultCulture },
-    SupportedUICultures = new List<CultureInfo> { defaultCulture }
-};
-app.UseRequestLocalization(localizationOptions);
+// Culture gøgl, virker ikke.
+//var defaultCulture = new CultureInfo("da-DK");
+//var localizationOptions = new RequestLocalizationOptions
+//{
+//    DefaultRequestCulture = new RequestCulture(defaultCulture),
+//    SupportedCultures = new List<CultureInfo> { defaultCulture },
+//    SupportedUICultures = new List<CultureInfo> { defaultCulture }
+//};
+//app.UseRequestLocalization(localizationOptions);
 
+
+//Seeder databasen, hvis denne er tom.
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -59,6 +64,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+//Default "Start side" når programmet køre
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
