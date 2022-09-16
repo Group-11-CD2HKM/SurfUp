@@ -269,7 +269,7 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET: BoardPosts/Delete/5
-        [Authorize(Policy = "RequiredAdminRole")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             // Sæt model op og send den videre til delet viewet.
@@ -289,7 +289,8 @@ namespace SurfBoardManager.Controllers
         }
 
         // POST: BoardPosts/Delete/5
-        [Authorize(Policy ="RequiredAdminRole")] //Fortæller delete metoden at brugeren skal have en admin rolle for at kunne fjerne boardpost objektet.
+        [Authorize(Roles = "Admin")]
+        //Fortæller delete metoden at brugeren skal have en admin rolle for at kunne fjerne boardpost objektet.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         //DeleteConfirmed metoden, benytter sig af et id parameter til at fjerne en boardpost fra databasen.
