@@ -241,8 +241,8 @@ namespace SurfBoardManager.Controllers
                 {
                     _context.Update(rentalViewModel.BoardPost);
                     await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
+                }   
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!BoardPostExists(rentalViewModel.BoardPost.Id))
                     {
