@@ -310,7 +310,7 @@ namespace SurfBoardManager.Controllers
                     _context.Update(rentalViewModel.BoardPost);
                     _context.Attach(surfUpUser); // Required when using sqlite?
                     await _context.SaveChangesAsync();
-                }
+                }   
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!BoardPostExists(rentalViewModel.BoardPost.Id))
