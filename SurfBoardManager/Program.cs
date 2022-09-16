@@ -12,7 +12,7 @@ var configuration = builder.Configuration;
 builder.Services.AddDbContext<SurfBoardManagerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SurfBoardManagerContext") ?? throw new InvalidOperationException("Connection string 'SurfBoardManagerContext' not found.")));
 
-builder.Services.AddIdentity<SurfUpUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentity<SurfUpUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<SurfBoardManagerContext>().AddDefaultUI()
     .AddTokenProvider<DataProtectorTokenProvider<SurfUpUser>>(TokenOptions.DefaultProvider);
 
@@ -30,6 +30,12 @@ builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
     googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
     googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+});
+
+builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
+{
+    facebookOptions.AppId = configuration["Authentication:Facebook:AppId"];
+    facebookOptions.AppSecret = configuration["Authentication:Facebook:AppSecret"];
 });
 
 var app = builder.Build();  
