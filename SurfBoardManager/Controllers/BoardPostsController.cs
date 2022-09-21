@@ -102,7 +102,7 @@ namespace SurfBoardManager.Controllers
             return View(boardPost);
         }
 
-        [Authorize(Policy = "RequiredAdminRole")]
+        [Authorize(Roles = "Admin")]
         // GET: BoardPosts/Create
         // Get versionen af vores create metode, returnerer et view uden nogen injectet model.
         public IActionResult Create()
@@ -113,7 +113,7 @@ namespace SurfBoardManager.Controllers
         // POST: BoardPosts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Policy = "RequiredAdminRole")] //Fortæller Create metoden at brugeren skal have en admin rolle for at kunne oprette nye boardposts.
+        [Authorize(Roles = "Admin")] //Fortæller Create metoden at brugeren skal have en admin rolle for at kunne oprette nye boardposts.
         [HttpPost]
         [ValidateAntiForgeryToken] 
         //Create metoden, opretter nye boardPost.
@@ -139,7 +139,7 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET: BoardPosts/Edit/5
-        [Authorize(Policy = "RequiredAdminRole")] //Fortæller Edit metoden at brugeren skal have en admin rolle for at kunne ændre i boardpostens data.
+        [Authorize(Roles = "Admin")] //Fortæller Edit metoden at brugeren skal have en admin rolle for at kunne ændre i boardpostens data.
         public async Task<IActionResult> Edit(int? id)
         {
             // Finder boardPost med id parametren, og sender det videre til Edit viewt, så vi kan rette i det.
@@ -160,7 +160,7 @@ namespace SurfBoardManager.Controllers
         // POST: BoardPosts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Policy = "RequiredAdminRole")] //Fortæller edit metoden at brugeren skal have en admin rolle for at kunne ændre i boardpost objektet.
+        [Authorize(Roles = "Admin")] //Fortæller edit metoden at brugeren skal have en admin rolle for at kunne ændre i boardpost objektet.
         [HttpPost]
         [ValidateAntiForgeryToken]
         //Edit metoden, lader en bruger med admin rettigheder ændre på boardpostens data.
@@ -284,7 +284,7 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET: BoardPosts/Delete/5
-        [Authorize(Policy = "RequiredAdminRole")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             // Sæt model op og send den videre til delet viewet.
@@ -304,7 +304,8 @@ namespace SurfBoardManager.Controllers
         }
 
         // POST: BoardPosts/Delete/5
-        [Authorize(Policy ="RequiredAdminRole")] //Fortæller delete metoden at brugeren skal have en admin rolle for at kunne fjerne boardpost objektet.
+        [Authorize(Roles = "Admin")]
+        //Fortæller delete metoden at brugeren skal have en admin rolle for at kunne fjerne boardpost objektet.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         //DeleteConfirmed metoden, benytter sig af et id parameter til at fjerne en boardpost fra databasen.
