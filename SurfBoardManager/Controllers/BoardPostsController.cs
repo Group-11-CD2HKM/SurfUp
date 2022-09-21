@@ -171,20 +171,26 @@ namespace SurfBoardManager.Controllers
             {
                 return NotFound();
             }
-
+            
+            //Finder det Boardpost objekt fra databasen der matcher ID'et sendt fra viewet
             var boardPostToBeUpdated = await _context.BoardPost.FirstOrDefaultAsync(x => x.Id == id);
 
+            //Hvis objektet ikke kan findes, er det slettet. Den følgende 'if' kodeblok håndterer dette scenarie
             if(boardPostToBeUpdated == null)
             {
                 BoardPost deletedBoardPost = new BoardPost();
+                //Forsøger at udfylde deletedBoardPost objektet, med det objekt controlleren holder på fra viewet.
+                //Det vil sige, det boardpost objektet vi modtog fra viewet i denne metode.
                 await TryUpdateModelAsync(deletedBoardPost);
+                //AddModelError, tilføjer fejlbeskeden brugeren skal se.
                 ModelState.AddModelError("", "Board ændringer kan ikke gemmes. En anden bruger har slettet boarded");
+                //Sender objektet tilbage til viewet
                 return View(deletedBoardPost);
             }
 
-            _context.Entry(boardPostToBeUpdated).Property("RowVersion").OriginalValue = boardPost.RowVersion;
-
-            
+            //Sætter original værdien for RowVersion,
+            //dvs. den oprindelige vi fik fra da vi kaldte Edit GET metoden.
+            _context.Entry(boardPostToBeUpdated).Property("RowVersion").OriginalValue = boardPost.RowVersion;         
 
             if (await TryUpdateModelAsync<BoardPost>(boardPostToBeUpdated, "", 
                 b => b.Name,
@@ -201,21 +207,29 @@ namespace SurfBoardManager.Controllers
             {
                 try
                 {
+                    //SaveChangesAsync skaber en ConcurrenceException såfremt UPDATE SQL command returnerer 0 ændrede rækker.
+                    //Det gør den hvis RowVersion kollonen på objektet i databasen
+                    //er anderledes fra det boardpost objekt vi arbejder med her.
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
+                    //Finder den entity der var involveret i exception
                     var exceptionEntry = ex.Entries.Single();
+                    //Trækker det enkelte objekt ud og hardcaster til et BoardPost objekt
                     var clientValues = (BoardPost)exceptionEntry.Entity;
+                    //Forespørger databasen for at finde frem til de nye værdier der ligger i databasen
                     var databaseEntry = exceptionEntry.GetDatabaseValues();
 
+                    //Hvis boardet er slettet i mellemtiden:
                     if(databaseEntry == null)
                     {
                         ModelState.AddModelError("", "Board ændringer kan ikke gemmes. En anden bruger har slettet boarded");
                     }
                     else
                     {
+                        //Caster objektet til et Boardpost objekt
                         var databaseValue = (BoardPost)databaseEntry.ToObject();
 
                         #region Fejlmeddelelser for hver textbox i view
@@ -258,8 +272,9 @@ namespace SurfBoardManager.Controllers
                         #endregion
 
                         ModelState.AddModelError("", "Kunne ikke gemme ændringerne." +
-                            "En anden bruger har i mellemtiden lavet ændringer i dette board." +
-                            "Ædringerne er vist i textboksene. Click på Save igen, for at gemme dine ændringer");
+                            " En anden bruger har i mellemtiden lavet ændringer i dette board." +
+                            " Ædringerne er vist i textboksene. Click på Save igen, for at gemme dine ændringer");
+                        //Sætter RowVersion propertien for objektet til at være den nyere fra databasen
                         boardPostToBeUpdated.RowVersion = (byte[])databaseValue.RowVersion;
                         ModelState.Remove("RowVersion");
                     }
