@@ -9,6 +9,9 @@
     <form asp-action="Rent">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="BoardPost.Id" />
+        <input type="hidden" asp-for="BoardPost.Name" />
+        <input type="hidden" asp-for="BoardPost.Equipment" />
+        <input type="hidden" asp-for="BoardPost.BoardImage" />
         <input type="hidden" asp-for="BoardPost.RowVersion" />
         <div class="form-group">
             <label asp-for="RentalPeriod" class="control-label"></label>
