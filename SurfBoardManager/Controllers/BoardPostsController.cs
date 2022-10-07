@@ -373,9 +373,12 @@ namespace SurfBoardManager.Controllers
             }
 
             var boardPost = await _context.BoardPost
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            rentalViewModel.BoardPost = boardPost;
+            //rentalViewModel.BoardPost = boardPost;
+
+            _context.Entry(boardPost).Property("RowVersion").OriginalValue = rentalViewModel.BoardPost.RowVersion;
 
             // Is no longer needed.
             // These properties cannot be marked nullable,
@@ -384,7 +387,7 @@ namespace SurfBoardManager.Controllers
             //ModelState.Remove("BoardPost.Name");
             //ModelState.Remove("BoardPost.Equipment");
             //ModelState.Remove("BoardPost.BoardImage");
-            
+
             // Set rental related properties.
             rentalViewModel.BoardPost.RentalDate = DateTime.Now;
             rentalViewModel.BoardPost.RentalDateEnd = DateTime.Now.AddDays(rentalViewModel.RentalPeriod);
@@ -395,18 +398,26 @@ namespace SurfBoardManager.Controllers
                 try
                 {
                     _context.Update(rentalViewModel.BoardPost);
-                    _context.Attach(surfUpUser); // Required when using sqlite?
+                    //_context.Attach(surfUpUser); // Required when using sqlite?
                     await _context.SaveChangesAsync();
                 }   
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
+                    //Finder den entity der var involveret i exception
+                    var exceptionEntry = ex.Entries.Single();
+                    //Trækker det enkelte objekt ud og hardcaster til et BoardPost objekt
+                    var clientValues = (BoardPost)exceptionEntry.Entity;
+                    //Forespørger databasen for at finde frem til de nye værdier der ligger i databasen
+                    var databaseEntry = exceptionEntry.GetDatabaseValues();
+
                     if (!BoardPostExists(rentalViewModel.BoardPost.Id))
                     {
                         return NotFound();
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError("", "Boardet er desværre blevet udlejet til en anden");
+                        return View(rentalViewModel);
                     }
                 }
                 return RedirectToAction(nameof(Index));
