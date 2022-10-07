@@ -102,7 +102,7 @@ namespace SurfBoardManager.Controllers
             return View(boardPost);
         }
 
-        [Authorize(Policy = "RequiredAdminRole")]
+        [Authorize(Roles = "Admin")]
         // GET: BoardPosts/Create
         // Get versionen af vores create metode, returnerer et view uden nogen injectet model.
         public IActionResult Create()
@@ -113,7 +113,7 @@ namespace SurfBoardManager.Controllers
         // POST: BoardPosts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Policy = "RequiredAdminRole")] //Fortæller Create metoden at brugeren skal have en admin rolle for at kunne oprette nye boardposts.
+        [Authorize(Roles = "Admin")] //Fortæller Create metoden at brugeren skal have en admin rolle for at kunne oprette nye boardposts.
         [HttpPost]
         [ValidateAntiForgeryToken] 
         //Create metoden, opretter nye boardPost.
@@ -122,6 +122,8 @@ namespace SurfBoardManager.Controllers
             // Skal ikke længere bruges, hvis Modelstate.IsValid brokker sig,
             // så tjek om propertyen egentligt skal være nullable i modellen?
             // ModelState.Remove(nameof(SurfUpUser));
+
+            ModelState.Remove("RowVersion");
 
             if (ModelState.IsValid)
             {
@@ -137,7 +139,7 @@ namespace SurfBoardManager.Controllers
         }
 
         // GET: BoardPosts/Edit/5
-        [Authorize(Policy = "RequiredAdminRole")] //Fortæller Edit metoden at brugeren skal have en admin rolle for at kunne ændre i boardpostens data.
+        [Authorize(Roles = "Admin")] //Fortæller Edit metoden at brugeren skal have en admin rolle for at kunne ændre i boardpostens data.
         public async Task<IActionResult> Edit(int? id)
         {
             // Finder boardPost med id parametren, og sender det videre til Edit viewt, så vi kan rette i det.
@@ -146,7 +148,8 @@ namespace SurfBoardManager.Controllers
                 return NotFound();
             }
 
-            var boardPost = await _context.BoardPost.FindAsync(id);
+            var boardPost = await _context.BoardPost.AsNoTracking().FirstOrDefaultAsync(g => g.Id == id);
+
             if (boardPost == null)
             {
                 return NotFound();
@@ -157,48 +160,131 @@ namespace SurfBoardManager.Controllers
         // POST: BoardPosts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Policy = "RequiredAdminRole")] //Fortæller edit metoden at brugeren skal have en admin rolle for at kunne ændre i boardpost objektet.
+        [Authorize(Roles = "Admin")] //Fortæller edit metoden at brugeren skal have en admin rolle for at kunne ændre i boardpost objektet.
         [HttpPost]
         [ValidateAntiForgeryToken]
         //Edit metoden, lader en bruger med admin rettigheder ændre på boardpostens data.
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price, BoardImage")] BoardPost boardPost)
+        public async Task<IActionResult> Edit(int id,[Bind("Id,Name,Width,Length,Thickness,Volume,BoardType,Equipment,Price,BoardImage,RowVersion")] BoardPost boardPost)
         {
             //checker om boardPost id'et matcher overens med input id'et.
             if (id != boardPost.Id)
             {
                 return NotFound();
             }
+            
+            //Finder det Boardpost objekt fra databasen der matcher ID'et sendt fra viewet
+            var boardPostToBeUpdated = await _context.BoardPost.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (ModelState.IsValid)
+            //Hvis objektet ikke kan findes, er det slettet. Den følgende 'if' kodeblok håndterer dette scenarie
+            if(boardPostToBeUpdated == null)
+            {
+                BoardPost deletedBoardPost = new BoardPost();
+                //Forsøger at udfylde deletedBoardPost objektet, med det objekt controlleren holder på fra viewet.
+                //Det vil sige, det boardpost objektet vi modtog fra viewet i denne metode.
+                await TryUpdateModelAsync(deletedBoardPost);
+                //AddModelError, tilføjer fejlbeskeden brugeren skal se.
+                ModelState.AddModelError("", "Board ændringer kan ikke gemmes. En anden bruger har slettet boarded");
+                //Sender objektet tilbage til viewet
+                return View(deletedBoardPost);
+            }
+
+            //Sætter original værdien for RowVersion,
+            //dvs. den oprindelige vi fik fra da vi kaldte Edit GET metoden.
+            _context.Entry(boardPostToBeUpdated).Property("RowVersion").OriginalValue = boardPost.RowVersion;         
+
+            if (await TryUpdateModelAsync<BoardPost>(boardPostToBeUpdated, "", 
+                b => b.Name,
+                b => b.Length,
+                b => b.Thickness,
+                b => b.Volume,
+                b => b.BoardType,
+                b => b.Equipment,
+                b => b.Price,
+                b => b.Width,
+                b => b.BoardImage,
+                b => b.IsRented
+                ))
             {
                 try
                 {
-                    // Genoptager tracking af boardPost objektet
-                    // og gemmer ændringerne i databasen.
-                    _context.Update(boardPost);
+                    //SaveChangesAsync skaber en ConcurrenceException såfremt UPDATE SQL command returnerer 0 ændrede rækker.
+                    //Det gør den hvis RowVersion kollonen på objektet i databasen
+                    //er anderledes fra det boardpost objekt vi arbejder med her.
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                // Hvis flere brugere forsøgte at ændre i databasen på samme tid, så vil den første bruger "få ret"
-                // og vi får i stedet en "dbupdateConcurrencyexecption". Hvis boardPosten er blevet slettet i mellemtiden,
-                // så redirectes vi til notfound viewt. Ellser kaster vi exception igen.
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
-                    if (!BoardPostExists(boardPost.Id))
+                    //Finder den entity der var involveret i exception
+                    var exceptionEntry = ex.Entries.Single();
+                    //Trækker det enkelte objekt ud og hardcaster til et BoardPost objekt
+                    var clientValues = (BoardPost)exceptionEntry.Entity;
+                    //Forespørger databasen for at finde frem til de nye værdier der ligger i databasen
+                    var databaseEntry = exceptionEntry.GetDatabaseValues();
+
+                    //Hvis boardet er slettet i mellemtiden:
+                    if(databaseEntry == null)
                     {
-                        return NotFound();
+                        ModelState.AddModelError("", "Board ændringer kan ikke gemmes. En anden bruger har slettet boarded");
                     }
                     else
                     {
-                        throw;
+                        //Caster objektet til et Boardpost objekt
+                        var databaseValue = (BoardPost)databaseEntry.ToObject();
+
+                        #region Fejlmeddelelser for hver textbox i view
+                        if (clientValues.Name != databaseValue.Name)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Name}");
+                        }
+                        if (clientValues.Length != databaseValue.Length)
+                        {
+                            ModelState.AddModelError("Length", $"Nuværende værdi: {databaseValue.Length}");
+                        }
+                        if (clientValues.Width != databaseValue.Width)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Width}");
+                        }
+                        if (clientValues.Volume != databaseValue.Volume)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Volume}");
+                        }
+                        if (clientValues.Thickness != databaseValue.Thickness)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Thickness}");
+                        }
+                        if (clientValues.BoardType != databaseValue.BoardType)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.BoardType}");
+                        }
+                        if (clientValues.BoardImage != databaseValue.BoardImage)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.BoardImage}");
+                        }
+                        if (clientValues.Price != databaseValue.Price)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Price}");
+                        }
+                        if (clientValues.Equipment != databaseValue.Equipment)
+                        {
+                            ModelState.AddModelError("Name", $"Nuværende værdi: {databaseValue.Equipment}");
+                        }
+                        #endregion
+
+                        ModelState.AddModelError("", "Kunne ikke gemme ændringerne." +
+                            " En anden bruger har i mellemtiden lavet ændringer i dette board." +
+                            " Ædringerne er vist i textboksene. Click på Save igen, for at gemme dine ændringer");
+                        //Sætter RowVersion propertien for objektet til at være den nyere fra databasen
+                        boardPostToBeUpdated.RowVersion = (byte[])databaseValue.RowVersion;
+                        ModelState.Remove("RowVersion");
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(boardPost);
+            return View(boardPostToBeUpdated);
         }
 
         // GET: BoardPosts/Delete/5
-        [Authorize(Policy = "RequiredAdminRole")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             // Sæt model op og send den videre til delet viewet.
@@ -218,7 +304,8 @@ namespace SurfBoardManager.Controllers
         }
 
         // POST: BoardPosts/Delete/5
-        [Authorize(Policy ="RequiredAdminRole")] //Fortæller delete metoden at brugeren skal have en admin rolle for at kunne fjerne boardpost objektet.
+        [Authorize(Roles = "Admin")]
+        //Fortæller delete metoden at brugeren skal have en admin rolle for at kunne fjerne boardpost objektet.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         //DeleteConfirmed metoden, benytter sig af et id parameter til at fjerne en boardpost fra databasen.
