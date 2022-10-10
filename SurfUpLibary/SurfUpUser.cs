@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace SurfBoardManager.Models
+namespace SurfUpLibary
 {
     public class SurfUpUser : IdentityUser
     {

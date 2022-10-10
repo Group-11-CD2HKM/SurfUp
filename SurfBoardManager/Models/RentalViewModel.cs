@@ -1,4 +1,6 @@
-﻿namespace SurfBoardManager.Models
+﻿using SurfUpLibary;
+
+namespace SurfBoardManager.Models
 {
     public class RentalViewModel
     {

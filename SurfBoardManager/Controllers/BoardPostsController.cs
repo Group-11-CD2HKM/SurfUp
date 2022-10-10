@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SurfBoardManager.Data;
 using SurfBoardManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using SurfUpLibary;
+using System.Net;
+using System.Text.Json;
 
 namespace SurfBoardManager.Controllers
 {
@@ -20,6 +22,8 @@ namespace SurfBoardManager.Controllers
         private readonly SurfBoardManagerContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpClient _client = new HttpClient();
+        private readonly string _apiUri = "https://localhost:7175/api/Board";
 
         public BoardPostsController(
             SurfBoardManagerContext context,
@@ -285,46 +289,19 @@ namespace SurfBoardManager.Controllers
                 return NotFound();
             }
 
-            var boardPost = await _context.BoardPost
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            rentalViewModel.BoardPost = boardPost;
-
-            // Is no longer needed.
-            // These properties cannot be marked nullable,
-            // but they are all value types, so they can be hidden in the corresponding form and sent to us (see /Views/BoardPosts/Rent.cshtml).
-            //ModelState.Remove("BoardPost");
-            //ModelState.Remove("BoardPost.Name");
-            //ModelState.Remove("BoardPost.Equipment");
-            //ModelState.Remove("BoardPost.BoardImage");
-            
-            // Set rental related properties.
-            rentalViewModel.BoardPost.RentalDate = DateTime.Now;
-            rentalViewModel.BoardPost.RentalDateEnd = DateTime.Now.AddDays(rentalViewModel.RentalPeriod);
-            rentalViewModel.BoardPost.SurfUpUser = surfUpUser;
-
-            if (ModelState.IsValid)
+            HttpRequestMessage request = new HttpRequestMessage();
+            string s = _apiUri + $"/{id}?userId={surfUpUser.Id}&endDate={DateTime.Now.AddDays(rentalViewModel.RentalPeriod).ToString("yyyy-MM-dd")}";
+            HttpResponseMessage response = await _client.GetAsync(s);
+            try
             {
-                try
-                {
-                    _context.Update(rentalViewModel.BoardPost);
-                    _context.Attach(surfUpUser); // Required when using sqlite?
-                    await _context.SaveChangesAsync();
-                }   
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BoardPostExists(rentalViewModel.BoardPost.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                response.EnsureSuccessStatusCode();
+                return RedirectToAction(nameof(Details),new {id = id});
             }
-            return View(rentalViewModel);
+            catch(HttpRequestException e)
+            {
+                return NotFound();
+            }
+           
         }
     }
 }

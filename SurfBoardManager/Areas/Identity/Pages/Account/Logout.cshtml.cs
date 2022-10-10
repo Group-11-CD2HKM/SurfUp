@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using SurfBoardManager.Models;
+using SurfUpLibary;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account
 {

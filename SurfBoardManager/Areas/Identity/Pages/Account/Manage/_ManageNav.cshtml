@@ -1,4 +1,4 @@
-﻿@inject SignInManager<SurfBoardManager.Models.SurfUpUser> SignInManager
+﻿@inject SignInManager<SurfUpLibary.SurfUpUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }

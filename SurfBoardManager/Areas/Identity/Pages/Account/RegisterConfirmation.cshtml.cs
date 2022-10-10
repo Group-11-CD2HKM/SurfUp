@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using SurfBoardManager.Models;
+using SurfUpLibary;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account
 {
