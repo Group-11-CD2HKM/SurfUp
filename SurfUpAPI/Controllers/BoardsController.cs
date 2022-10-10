@@ -8,12 +8,12 @@ namespace SurfUpAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BoardController : ControllerBase
+    public class BoardsController : ControllerBase
     {
         private readonly SurfBoardManagerContext _context;
         private readonly UserManager<SurfUpUser> _userManager;
 
-        public BoardController(SurfBoardManagerContext context, UserManager<SurfUpUser> userManager)
+        public BoardsController(SurfBoardManagerContext context, UserManager<SurfUpUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -37,7 +37,7 @@ namespace SurfUpAPI.Controllers
         }
 
         [HttpGet ("{id}")]
-        public async Task<IActionResult> Rent(int id, string userId, DateTime? endDate)
+        public async Task<IActionResult> GetRent(int id, string userId, DateTime? endDate)
         {
             //Metoden sætter et board til at være udlejet til en bestemt bruger
 
@@ -53,7 +53,7 @@ namespace SurfUpAPI.Controllers
                 _context.Update(boardPost);
                 //_context.Attach(surfUpUser); // Required when using sqlite?
                 await _context.SaveChangesAsync();
-                return Ok();
+                return Ok(boardPost);
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -63,6 +63,31 @@ namespace SurfUpAPI.Controllers
                 var clientValues = (BoardPost)exceptionEntry.Entity;
                 //Forespørger databasen for at finde frem til de nye værdier der ligger i databasen
                 var databaseEntry = exceptionEntry.GetDatabaseValues();
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet ("UnrentBoards/{userId}")]
+        public async Task<IActionResult> GetUnrentBoards(string userId)
+        {
+            try
+            {
+                var boards = _context.BoardPost.Include("SurfUpUser").Where(b => b.SurfUpUser.Id.Equals(userId)).ToList();
+                foreach (var board in boards)
+                {
+                    board.RentalDateEnd = DateTime.Now;
+                    board.SurfUpUser = null;
+                    board.IsRented = false;
+                }
+                await _context.SaveChangesAsync();
+                return Ok(boards);
+            }
+            catch (NullReferenceException ex)
+            {
+                return NotFound();
+            }
+            catch (DbUpdateException ex)
+            {
                 return Conflict(ex.Message);
             }
         }
