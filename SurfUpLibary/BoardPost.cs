@@ -80,6 +80,7 @@ namespace SurfUpLibary
         {
             IsRented = true;
         }
-        public SurfUpUser? SurfUpUser { get; set; }
+        public virtual SurfUpUser? SurfUpUser { get; set; }
+        public string? SurfUpUserId { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace SurfBoardManager.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _client = new HttpClient();
-        private readonly string _apiUri = "https://localhost:7175/api/Board";
+        private readonly string _apiUri = "https://localhost:7175/api/Boards";
 
         public BoardPostsController(
             SurfBoardManagerContext context,
@@ -253,7 +253,6 @@ namespace SurfBoardManager.Controllers
             return (_context.BoardPost?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        [Authorize]
         public async Task<IActionResult> Rent(int? id)
         {
             // Sætter rentalViewModel op og injecter den i Rent viewet.
@@ -276,13 +275,20 @@ namespace SurfBoardManager.Controllers
             return View(rentalViewModel);
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel)
         {
+            SurfUpUser surfUpUser;
             var _user = _httpContextAccessor.HttpContext.User;
-            var surfUpUser = await _userManager.FindByEmailAsync(_user.Identity.Name);
+            if (_user.Identity.IsAuthenticated)
+            {
+                surfUpUser = await _userManager.FindByEmailAsync(_user.Identity.Name);
+            } else
+            {
+                var anonIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
+                surfUpUser = await _userManager.FindByNameAsync(anonIp);
+            }
             // Error checking. Maybe som user got here by accident or w.e.
             if (rentalViewModel.BoardPost is null || id != rentalViewModel.BoardPost.Id)
             {
