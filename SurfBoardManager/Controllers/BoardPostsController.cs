@@ -279,14 +279,23 @@ namespace SurfBoardManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel)
         {
+            // Define a surfUpUser
             SurfUpUser surfUpUser;
+
+            // Does so we have access to the user variable
             var _user = _httpContextAccessor.HttpContext.User;
+
+            // Checks whether the user is logged in or anonymous
             if (_user.Identity.IsAuthenticated)
             {
+                // Find the user by Name (this is a logged in user)
                 surfUpUser = await _userManager.FindByEmailAsync(_user.Identity.Name);
             } else
             {
+                // Gets the IP-Address for the current anonymous user 
                 var anonIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                // Find the user by name (in this case ip address since it's an anonymous user)
                 surfUpUser = await _userManager.FindByNameAsync(anonIp);
             }
             // Error checking. Maybe som user got here by accident or w.e.
