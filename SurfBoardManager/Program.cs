@@ -6,6 +6,7 @@ using SurfBoardManager.Areas.Identity;
 using SurfBoardManager.Models;
 using System.Globalization;
 using Microsoft.AspNetCore.Identity;
+using SurfBoardManager.Models.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -69,6 +70,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -76,6 +78,8 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.AnonIp();
 
 //Default "Start side" når programmet køre
 app.MapControllerRoute(
