@@ -4,18 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SurfBoardManager.Models;
 
-namespace SurfBoardManager.Data
+
+namespace SurfUpLibary
 {
     public class SurfBoardManagerContext : IdentityDbContext<SurfUpUser>
     {
-        public SurfBoardManagerContext (DbContextOptions<SurfBoardManagerContext> options)
+        public SurfBoardManagerContext(DbContextOptions<SurfBoardManagerContext> options)
             : base(options)
         {
         }
 
-        public DbSet<SurfBoardManager.Models.BoardPost> BoardPost { get; set; } = default!;
+        public DbSet<BoardPost> BoardPost { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -1,10 +1,9 @@
-﻿using Castle.MicroKernel.SubSystems.Conversion;
+﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc;
 using System;
 
-namespace SurfBoardManager.Models
+namespace SurfUpLibary
 {
     public class BoardPost
     {

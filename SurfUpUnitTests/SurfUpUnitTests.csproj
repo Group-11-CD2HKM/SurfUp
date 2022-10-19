@@ -12,6 +12,7 @@
     <PackageReference Include="Castle.Core" Version="5.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.8" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.9" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.1" />

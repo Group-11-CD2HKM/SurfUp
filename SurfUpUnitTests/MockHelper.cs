@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SurfBoardManager.Controllers;
-using SurfBoardManager.Data;
 using SurfBoardManager.Models;
 using System;
 using System.Collections.Generic;
@@ -15,6 +14,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using SurfUpLibary;
 
 namespace SurfUpUnitTests
 {

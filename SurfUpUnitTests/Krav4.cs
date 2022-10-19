@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SurfBoardManager.Models;
 using SurfUpUnitTests;
+using SurfUpLibary;
 
 namespace SurfUpUnitTests
 {

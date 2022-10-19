@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using SurfBoardManager.Data;
+using SurfUpLibary;
 using System;
 using System.Linq;
 

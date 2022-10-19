@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using SurfBoardManager.Data;
+using SurfUpLibary;
+using SurfBoardManager.Areas.Identity;
 using SurfBoardManager.Models;
 using System.Globalization;
 using Microsoft.AspNetCore.Identity;

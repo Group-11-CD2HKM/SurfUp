@@ -11,8 +11,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SurfBoardManager.Controllers;
-using SurfBoardManager.Data;
+using SurfUpLibary;
 using SurfBoardManager.Models;
+using static System.Net.WebRequestMethods;
 
 namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
 {
@@ -22,6 +23,8 @@ namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<SurfUpUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
         private readonly SurfBoardManagerContext _context;
+        private readonly string _apiUri = $"https://localhost:7175/api/Boards";
+        private readonly HttpClient _client = new();
 
         public DeletePersonalDataModel(
             UserManager<SurfUpUser> userManager,
@@ -92,23 +95,29 @@ namespace SurfBoardManager.Areas.Identity.Pages.Account.Manage
                     return Page();
                 }
             }
-            var boardPosts = _context.BoardPost.Include("SurfUpUser").Where(p => p.SurfUpUser.Id == user.Id).ToList();
 
-            foreach (var item in boardPosts)
+            string s = _apiUri + $"/UnrentBoards/{user.Id}";
+            var response = await _client.GetAsync(s);
+
+            try
             {
-                item.UnRent();
+                response.EnsureSuccessStatusCode();
+                var result = await _userManager.DeleteAsync(user);
+                var userId = await _userManager.GetUserIdAsync(user);
+                if (!result.Succeeded)
+                {
+                    throw new InvalidOperationException($"Unexpected error occurred deleting user.");
+                }
+                await _signInManager.SignOutAsync();
+
+                _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
+                return Redirect("~/");
             }
-            await _context.SaveChangesAsync();
-            var result = await _userManager.DeleteAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
-            if (!result.Succeeded)
+            catch (HttpRequestException)
             {
                 throw new InvalidOperationException($"Unexpected error occurred deleting user.");
             }
-            await _signInManager.SignOutAsync();
 
-            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
-            return Redirect("~/");
         }
     }
 }
