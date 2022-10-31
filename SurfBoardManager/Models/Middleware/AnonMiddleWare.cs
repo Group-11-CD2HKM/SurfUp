@@ -29,7 +29,8 @@ namespace SurfBoardManager.Models.Middleware
                 {
                     var newUser = new SurfUpUser()
                     {
-                        UserName = anonIp
+                        UserName = anonIp,
+                        IsAnonymous = true
                     };
 
                     // userManager creates the user and stores it in DB.
