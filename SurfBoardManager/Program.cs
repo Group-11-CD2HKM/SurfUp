@@ -79,7 +79,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.AnonIp();
+app.Use( async (context, next) => {
+    CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
+    CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
 
+    await next.Invoke(context);
+});
 //Default "Start side" når programmet køre
 app.MapControllerRoute(
     name: "default",

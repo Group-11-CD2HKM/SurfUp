@@ -128,6 +128,9 @@ namespace SurfBoardManager.Controllers
             // ModelState.Remove(nameof(SurfUpUser));
 
             ModelState.Remove("RowVersion");
+            // Slå validering fra på decimal felter, det skal fikses senere!
+            // Er også slået fra i view, husk at fiks det!
+
 
             if (ModelState.IsValid)
             {
