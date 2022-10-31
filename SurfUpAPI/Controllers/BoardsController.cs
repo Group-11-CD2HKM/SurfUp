@@ -46,7 +46,6 @@ namespace SurfUpAPI.Controllers
 
             boardPost.RentalDate = DateTime.Now;
             boardPost.RentalDateEnd = endDate;
-            boardPost.SurfUpUser = surfUpUser;
 
             try
             {

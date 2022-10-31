@@ -77,7 +77,6 @@ namespace SurfUpLibary
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
-        public SurfUpUser? SurfUpUser { get; set; }
 
 
         //Metoden sætter "IsRented" til at være sandt, når den bliver kaldt.
@@ -85,6 +84,8 @@ namespace SurfUpLibary
         {
             IsRented = true;
         }
+        public virtual SurfUpUser? SurfUpUser { get; set; }
+        public string? SurfUpUserId { get; set; }
         public void UnRent()
         {
             RentalDateEnd = DateTime.Now;

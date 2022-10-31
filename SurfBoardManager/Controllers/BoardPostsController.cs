@@ -23,7 +23,7 @@ namespace SurfBoardManager.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _client = new HttpClient();
-        private readonly string _apiUri = "https://localhost:7175/api/Board";
+        private readonly string _apiUri = "https://localhost:7175/api/Boards";
 
         public BoardPostsController(
             SurfBoardManagerContext context,
@@ -340,7 +340,6 @@ namespace SurfBoardManager.Controllers
             return (_context.BoardPost?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        [Authorize]
         public async Task<IActionResult> Rent(int? id)
         {
             // Sætter rentalViewModel op og injecter den i Rent viewet.
@@ -363,13 +362,29 @@ namespace SurfBoardManager.Controllers
             return View(rentalViewModel);
         }
 
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Rent(int id, [Bind("RentalPeriod,BoardPost")] RentalViewModel rentalViewModel)
         {
+            // Define a surfUpUser
+            SurfUpUser surfUpUser;
+
+            // Does so we have access to the user variable
             var _user = _httpContextAccessor.HttpContext.User;
-            var surfUpUser = await _userManager.FindByEmailAsync(_user.Identity.Name);
+
+            // Checks whether the user is logged in or anonymous
+            if (_user.Identity.IsAuthenticated)
+            {
+                // Find the user by Name (this is a logged in user)
+                surfUpUser = await _userManager.FindByEmailAsync(_user.Identity.Name);
+            } else
+            {
+                // Gets the IP-Address for the current anonymous user 
+                var anonIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                // Find the user by name (in this case ip address since it's an anonymous user)
+                surfUpUser = await _userManager.FindByNameAsync(anonIp);
+            }
             // Error checking. Maybe som user got here by accident or w.e.
             if (rentalViewModel.BoardPost is null || id != rentalViewModel.BoardPost.Id)
             {
