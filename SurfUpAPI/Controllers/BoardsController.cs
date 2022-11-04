@@ -6,6 +6,7 @@ using SurfUpLibary;
 
 namespace SurfUpAPI.Controllers
 {
+    [Route("api/[controller]")]
     [Route("api{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
@@ -60,38 +61,9 @@ namespace SurfUpAPI.Controllers
         }
 
         [MapToApiVersion("1.0")]
-        [HttpGet ("{id}")]
-        public async Task<IActionResult> GetRentV1(int id, string userId, DateTime? endDate)
-        {
-            //Metoden sætter et board til at være udlejet til en bestemt bruger
-
-            var boardPost = await _context.BoardPost.FirstOrDefaultAsync(m => m.Id == id);
-            var surfUpUser = await _userManager.FindByIdAsync(userId);
-
-            boardPost.RentalDate = DateTime.Now;
-            boardPost.RentalDateEnd = endDate;
-
-            try
-            {
-                _context.Update(boardPost);
-                //_context.Attach(surfUpUser); // Required when using sqlite?
-                await _context.SaveChangesAsync();
-                return Ok(boardPost);
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                //Finder den entity der var involveret i exception
-                var exceptionEntry = ex.Entries.Single();
-                //Trækker det enkelte objekt ud og hardcaster til et BoardPost objekt
-                var clientValues = (BoardPost)exceptionEntry.Entity;
-                //Forespørger databasen for at finde frem til de nye værdier der ligger i databasen
-                var databaseEntry = exceptionEntry.GetDatabaseValues();
-                return Conflict(ex.Message);
-            }
-        }
-
+        [MapToApiVersion("2.0")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetRent(int id, string userId, DateTime? endDate)
+        public async Task<IActionResult> GetRentV2(int id, string userId, DateTime? endDate)
         {
             //Metoden sætter et board til at være udlejet til en bestemt bruger
 

@@ -41,7 +41,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+//app.Use(async (HttpContext x, RequestDelegate y) =>
+//{
+//    // For debugging, place a debug point on next line.
+//    await y.Invoke(x);
+//});
 app.UseAuthorization();
 
 app.MapControllers();

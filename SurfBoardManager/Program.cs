@@ -23,7 +23,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddHttpClient("client",options =>
 {
-options.BaseAddress = new Uri("https://localhost:7175/api");
+options.BaseAddress = new Uri("https://localhost:7175");
 });
 
 
@@ -46,17 +46,6 @@ builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
 });
 
 var app = builder.Build();  
-
-// Culture gøgl, virker ikke.
-//var defaultCulture = new CultureInfo("da-DK");
-//var localizationOptions = new RequestLocalizationOptions
-//{
-//    DefaultRequestCulture = new RequestCulture(defaultCulture),
-//    SupportedCultures = new List<CultureInfo> { defaultCulture },
-//    SupportedUICultures = new List<CultureInfo> { defaultCulture }
-//};
-//app.UseRequestLocalization(localizationOptions);
-
 
 //Seeder databasen, hvis denne er tom.
 using (var scope = app.Services.CreateScope())
