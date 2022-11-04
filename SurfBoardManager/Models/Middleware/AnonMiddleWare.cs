@@ -14,13 +14,13 @@ namespace SurfBoardManager.Models.Middleware
             _next = next;
         }
 
-        public async Task Invoke(HttpContext context, UserManager<SurfUpUser> userManager)
+        public async Task Invoke(HttpContext context, UserManager<SurfUpUser> userManager, SignInManager<SurfUpUser> signInManager)
         {
             // Only run when unauthenticated.
             if (!context.User.Identity.IsAuthenticated)
             {
                 // Find the IP of the Anonymous user and tries to get the surfUpUser by name(ip)
-                string? anonIp = context.Connection.RemoteIpAddress?.ToString();
+                string? anonIp = context.Connection.RemoteIpAddress?.ToString().Replace(':','-');
                 var surfUpUser = await userManager.FindByNameAsync(anonIp);
 
                 // Checks if surfUpUser exists, and creates a new surfUpUser if the user doesn't already exist.
@@ -34,8 +34,11 @@ namespace SurfBoardManager.Models.Middleware
                     };
 
                     // userManager creates the user and stores it in DB.
-                    await userManager.CreateAsync(newUser);
+                    var result = await userManager.CreateAsync(newUser);
+                    surfUpUser = newUser;
                 }
+
+                 signInManager.SignInAsync(surfUpUser, true);
                 // Print out IP to screen
                 _logger.LogInformation($"Anonymous IP: {anonIp}");
             }

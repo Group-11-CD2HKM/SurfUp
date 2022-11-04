@@ -8,6 +8,6 @@ namespace SurfUpLibary
         // The list is nullable, since a user is not required to rent a board.
         public List<BoardPost>? BoardPosts { get; set; }
         
-        public virtual bool IsAnonymous { get; set; } = false;
+        public bool IsAnonymous { get; set; } = false;
     }
 }

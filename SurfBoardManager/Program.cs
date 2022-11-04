@@ -21,6 +21,12 @@ builder.Services.AddIdentity<SurfUpUser, IdentityRole>(options => options.SignIn
 
 builder.Services.AddRazorPages();
 
+builder.Services.AddHttpClient("client",options =>
+{
+options.BaseAddress = new Uri("https://localhost:7175/api");
+});
+
+
 //builder.Services.AddMvc().AddMvcOptions(options => options.ModelBinderProviders.Insert(0, new DecimalModelBinder());
 
 // Add services to the container.
@@ -79,12 +85,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.AnonIp();
-app.Use( async (context, next) => {
+
+app.Use(async (context, next) =>
+{
     CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
     CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
 
     await next.Invoke(context);
 });
+
 //Default "Start side" når programmet køre
 app.MapControllerRoute(
     name: "default",

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
 
 namespace SurfBoardManager
 {
@@ -28,9 +28,9 @@ namespace SurfBoardManager
         public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
         {
             // Count items in list.
-            var count = await source.CountAsync();
+            var count = source.Count();
             // Calculate how many items to skip, based on index and pageSize.
-            var items = await source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+            var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             return new PaginatedList<T>(items, count, pageIndex, pageSize);
         }
     }
