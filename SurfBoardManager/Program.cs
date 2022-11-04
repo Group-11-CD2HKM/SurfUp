@@ -23,7 +23,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddHttpClient("client",options =>
 {
-options.BaseAddress = new Uri("https://localhost:7175");
+options.BaseAddress = new Uri("https://localhost:7175/api/");
 });
 
 

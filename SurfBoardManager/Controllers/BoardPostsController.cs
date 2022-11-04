@@ -385,7 +385,7 @@ namespace SurfBoardManager.Controllers
                 return NotFound();
             }
 
-            string s = $"api/Boards/{id}?userId={surfUpUser.Id}&endDate={DateTime.Now.AddDays(rentalViewModel.RentalPeriod).ToString("yyyy-MM-dd")}";
+            string s = $"Boards/{id}?userId={surfUpUser.Id}&endDate={DateTime.Now.AddDays(rentalViewModel.RentalPeriod).ToString("yyyy-MM-dd")}";
             HttpResponseMessage response = await _client.GetAsync(s);
             try
             {
@@ -394,7 +394,7 @@ namespace SurfBoardManager.Controllers
             }
             catch(HttpRequestException e)
             {
-                return NotFound();
+                return NotFound(e.Message);
             }
            
         }
@@ -405,9 +405,9 @@ namespace SurfBoardManager.Controllers
 
             if (foundUser.IsAnonymous)
             {
-                return (await _client.GetFromJsonAsync<List<BoardPost>>("api/Boards")).AsQueryable();
+                return (await _client.GetFromJsonAsync<List<BoardPost>>("Boards")).AsQueryable();
             }
-            var result = await _client.GetFromJsonAsync<List<BoardPost>>("api2.0/Boards");
+            var result = await _client.GetFromJsonAsync<List<BoardPost>>("v2.0/Boards");
             return (result).AsQueryable();
         }
     }

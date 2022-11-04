@@ -7,7 +7,7 @@ using SurfUpLibary;
 namespace SurfUpAPI.Controllers
 {
     [Route("api/[controller]")]
-    [Route("api{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
@@ -76,7 +76,7 @@ namespace SurfUpAPI.Controllers
                 var count = _context.BoardPost.Where(b => b.SurfUpUserId == userId).Count();
                 if(count >= 1)
                 {
-                    return Conflict();
+                    return Conflict("Only 1 board may be rented by anonymous users.");
                 }
             }
 
