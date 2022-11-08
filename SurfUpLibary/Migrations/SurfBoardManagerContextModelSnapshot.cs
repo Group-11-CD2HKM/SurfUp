@@ -3,19 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfUpLibary;
 
 #nullable disable
 
-namespace SurfBoardManager.Migrations
+namespace SurfUpLibary.Migrations
 {
     [DbContext(typeof(SurfBoardManagerContext))]
-    [Migration("20220913082514_NewServer")]
-    partial class NewServer
+    partial class SurfBoardManagerContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,7 +155,7 @@ namespace SurfBoardManager.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SurfBoardManager.Models.BoardPost", b =>
+            modelBuilder.Entity("SurfUpLibary.BoardPost", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -193,6 +191,12 @@ namespace SurfBoardManager.Migrations
                     b.Property<DateTime?>("RentalDateEnd")
                         .HasColumnType("datetime2");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("SurfUpUserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -212,7 +216,7 @@ namespace SurfBoardManager.Migrations
                     b.ToTable("BoardPost");
                 });
 
-            modelBuilder.Entity("SurfBoardManager.Models.SurfUpUser", b =>
+            modelBuilder.Entity("SurfUpLibary.SurfUpUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -229,6 +233,9 @@ namespace SurfBoardManager.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAnonymous")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -288,7 +295,7 @@ namespace SurfBoardManager.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("SurfBoardManager.Models.SurfUpUser", null)
+                    b.HasOne("SurfUpLibary.SurfUpUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -297,7 +304,7 @@ namespace SurfBoardManager.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("SurfBoardManager.Models.SurfUpUser", null)
+                    b.HasOne("SurfUpLibary.SurfUpUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -312,7 +319,7 @@ namespace SurfBoardManager.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SurfBoardManager.Models.SurfUpUser", null)
+                    b.HasOne("SurfUpLibary.SurfUpUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -321,23 +328,23 @@ namespace SurfBoardManager.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("SurfBoardManager.Models.SurfUpUser", null)
+                    b.HasOne("SurfUpLibary.SurfUpUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SurfBoardManager.Models.BoardPost", b =>
+            modelBuilder.Entity("SurfUpLibary.BoardPost", b =>
                 {
-                    b.HasOne("SurfBoardManager.Models.SurfUpUser", "SurfUpUser")
+                    b.HasOne("SurfUpLibary.SurfUpUser", "SurfUpUser")
                         .WithMany("BoardPosts")
                         .HasForeignKey("SurfUpUserId");
 
                     b.Navigation("SurfUpUser");
                 });
 
-            modelBuilder.Entity("SurfBoardManager.Models.SurfUpUser", b =>
+            modelBuilder.Entity("SurfUpLibary.SurfUpUser", b =>
                 {
                     b.Navigation("BoardPosts");
                 });

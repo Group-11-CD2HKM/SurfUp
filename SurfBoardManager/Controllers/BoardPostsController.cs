@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using SurfUpLibary;
 using System.Net;
 using System.Text.Json;
+using System.Drawing.Text;
 
 namespace SurfBoardManager.Controllers
 {
@@ -22,31 +23,32 @@ namespace SurfBoardManager.Controllers
         private readonly SurfBoardManagerContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HttpClient _client = new HttpClient();
-        private readonly string _apiUri = "https://localhost:7175/api/Boards";
+        private HttpClient _client;
 
         public BoardPostsController(
             SurfBoardManagerContext context,
             RoleManager<IdentityRole> roleManager,
             UserManager<SurfUpUser> userManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IHttpClientFactory clientFactory)
         //Opretter BoardPostController objekt som tager SurBoardManagerContext og RoleManager med type parameter IdentityRole som parameter.
         // Parametrene bliver injected af Asp.net, så længe de er registreret som en service i program.cs
-
         {
             _context = context;
             _roleManager = roleManager;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _client = clientFactory.CreateClient("client");
+
         }
 
         // HTTPS GET metode
         //Metoden tager pageNumber, searchString, min og max parameter, som bliver brugt til at sortere i BoardPost listen fra databasen.
         public async Task<IActionResult> Index(int? pageNumber, string searchString, string min, string max)
         {
+
             //Sætter alle BoardPost fra databasen = boardPost variablen.
-            var boardPosts = from b in _context.BoardPost
-                             select b;
+            IQueryable<BoardPost> boardPosts = await GetAllBoards(_httpContextAccessor.HttpContext.User.Identity.Name);
 
             //Sortere boardPost udfra om deres "Name" indeholder bruger inputtet fra "searchString" 
             if (!string.IsNullOrEmpty(searchString))
@@ -375,27 +377,15 @@ namespace SurfBoardManager.Controllers
             // Does so we have access to the user variable
             var _user = _httpContextAccessor.HttpContext.User;
 
-            // Checks whether the user is logged in or anonymous
-            if (_user.Identity.IsAuthenticated)
-            {
-                // Find the user by Name (this is a logged in user)
-                surfUpUser = await _userManager.FindByEmailAsync(_user.Identity.Name);
-            } else
-            {
-                // Gets the IP-Address for the current anonymous user 
-                var anonIp = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
+            surfUpUser = await _userManager.FindByNameAsync(_user.Identity.Name);
 
-                // Find the user by name (in this case ip address since it's an anonymous user)
-                surfUpUser = await _userManager.FindByNameAsync(anonIp);
-            }
             // Error checking. Maybe som user got here by accident or w.e.
             if (rentalViewModel.BoardPost is null || id != rentalViewModel.BoardPost.Id)
             {
                 return NotFound();
             }
 
-            HttpRequestMessage request = new HttpRequestMessage();
-            string s = _apiUri + $"/{id}?userId={surfUpUser.Id}&endDate={DateTime.Now.AddDays(rentalViewModel.RentalPeriod).ToString("yyyy-MM-dd")}";
+            string s = $"Boards/{id}?userId={surfUpUser.Id}&endDate={DateTime.Now.AddDays(rentalViewModel.RentalPeriod).ToString("yyyy-MM-dd")}";
             HttpResponseMessage response = await _client.GetAsync(s);
             try
             {
@@ -404,9 +394,21 @@ namespace SurfBoardManager.Controllers
             }
             catch(HttpRequestException e)
             {
-                return NotFound();
+                return NotFound(e.Message);
             }
            
+        }
+
+        private async Task<IQueryable<BoardPost>> GetAllBoards(string? user)
+        {
+            var foundUser = await _userManager.FindByNameAsync(user.Replace(':','-'));
+
+            if (foundUser.IsAnonymous)
+            {
+                return (await _client.GetFromJsonAsync<List<BoardPost>>("Boards")).AsQueryable();
+            }
+            var result = await _client.GetFromJsonAsync<List<BoardPost>>("v2.0/Boards");
+            return (result).AsQueryable();
         }
     }
 }

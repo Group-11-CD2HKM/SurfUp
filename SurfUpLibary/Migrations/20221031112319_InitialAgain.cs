@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SurfBoardManager.Migrations
+namespace SurfUpLibary.Migrations
 {
-    public partial class NewServer : Migration
+    public partial class InitialAgain : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -172,6 +172,7 @@ namespace SurfBoardManager.Migrations
                     RentalDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RentalDateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsRented = table.Column<bool>(type: "BIT", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     SurfUpUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
