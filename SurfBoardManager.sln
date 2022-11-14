@@ -11,9 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurfUpLibary", "SurfUpLibar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedModels", "SharedModels\SharedModels.csproj", "{916056C6-22C5-46C1-901D-ECDBB1E7E800}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurfBoardBlazorWASM.Server", "SurfBoardBlazorWASM\Server\SurfBoardBlazorWASM.Server.csproj", "{CE5F9513-BC4C-4154-A7F9-A997FB867AC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurfBoardBlazorWASM.Server", "SurfBoardBlazorWASM\Server\SurfBoardBlazorWASM.Server.csproj", "{CE5F9513-BC4C-4154-A7F9-A997FB867AC8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B87EE1AF-5013-4E8F-966C-66E5529E0E50} = {B87EE1AF-5013-4E8F-966C-66E5529E0E50}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurfBoardBlazorWASM.Client", "SurfBoardBlazorWASM\Client\SurfBoardBlazorWASM.Client.csproj", "{B87EE1AF-5013-4E8F-966C-66E5529E0E50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SurfBoardBlazorWASM.Client", "SurfBoardBlazorWASM\Client\SurfBoardBlazorWASM.Client.csproj", "{B87EE1AF-5013-4E8F-966C-66E5529E0E50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

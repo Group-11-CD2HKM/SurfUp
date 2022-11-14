@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SurfUpLibary\SurfUpLibary.csproj" />
+    <ProjectReference Include="..\Client\SurfBoardBlazorWASM.Client.csproj" />
   </ItemGroup>
 
 </Project>

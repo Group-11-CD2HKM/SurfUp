@@ -6,17 +6,20 @@ namespace SurfBoardBlazorWASM.Client.Services
 {
     public class BoardPostService : IBoardPostService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly NavigationManager _navigationManager;
-        public BoardPostService(HttpClient http, NavigationManager navManager)
+        public BoardPostService(IHttpClientFactory httpClientFactory, NavigationManager navManager)
         {
-            _httpClient = http;
+            _httpClientFactory = httpClientFactory;
             _navigationManager = navManager;
         }
 
         public async Task<List<BoardPost>> GetAllUnrentedBoardPosts()
         {
-            return await _httpClient.GetFromJsonAsync<List<BoardPost>>("api/BoadPosts") ?? new List<BoardPost>();
+            HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.PublicServerAPI");
+
+            var bordPosts = await httpClient.GetFromJsonAsync<List<BoardPost>>("api/Boards") ?? new List<BoardPost>();
+            return bordPosts;
         }
 
         public void RentBoard(BoardPost boardPost)

@@ -1,4 +1,4 @@
-﻿@page "/boardposts"
+﻿@page "/boards"
 @using SurfBoardBlazorWASM.Client.Services
 @using SurfUpLibary
 @inject IBoardPostService boardPostService
@@ -12,7 +12,7 @@
     }
 </ul>
 @code {
-    List<BoardPost> boardPosts;
+    List<BoardPost> boardPosts = new List<BoardPost>();
 }
 @functions{
     protected async override Task OnInitializedAsync()

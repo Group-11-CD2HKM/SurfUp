@@ -25,12 +25,12 @@ builder.Services.AddIdentityServer()
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
 
-builder.Services.AddApiVersioning(options =>
-{
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.DefaultApiVersion = ApiVersion.Default;
-    options.ReportApiVersions = true;
-});
+//builder.Services.AddApiVersioning(options =>
+//{
+//    options.AssumeDefaultVersionWhenUnspecified = true;
+//    options.DefaultApiVersion = ApiVersion.Default;
+//    options.ReportApiVersions = true;
+//});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
