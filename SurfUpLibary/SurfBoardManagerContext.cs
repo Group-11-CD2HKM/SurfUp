@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Duende.IdentityServer.EntityFramework.Options;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Options;
 
 namespace SurfUpLibary
 {
-    public class SurfBoardManagerContext : IdentityDbContext<SurfUpUser>
+    public class SurfBoardManagerContext : ApiAuthorizationDbContext<SurfUpUser>
     {
-        public SurfBoardManagerContext(DbContextOptions<SurfBoardManagerContext> options)
-            : base(options)
+        public SurfBoardManagerContext(
+            DbContextOptions options,
+            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
 

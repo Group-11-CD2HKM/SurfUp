@@ -1,0 +1,22 @@
+﻿@page "/boardposts"
+@using SurfBoardBlazorWASM.Client.Services
+@using SurfUpLibary
+@inject IBoardPostService boardPostService
+<h3>BoardPost</h3>
+<ul>
+    @foreach (var item in boardPosts)
+    {
+        <li>
+            @item.Name
+        </li>
+    }
+</ul>
+@code {
+    List<BoardPost> boardPosts;
+}
+@functions{
+    protected async override Task OnInitializedAsync()
+    {
+        boardPosts = await boardPostService.GetAllUnrentedBoardPosts();
+    }
+}

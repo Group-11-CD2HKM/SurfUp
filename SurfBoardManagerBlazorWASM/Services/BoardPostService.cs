@@ -15,7 +15,7 @@ namespace SurfBoardManagerBlazorWASM.Services
 
         public List<BoardPost> GetAllUnrentedBoardPosts()
         {
-
+            throw new NotImplementedException();
         }
 
         public void RentBoard(BoardPost boardPost)

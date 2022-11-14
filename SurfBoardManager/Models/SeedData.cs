@@ -18,9 +18,7 @@ namespace SurfBoardManager.Models
         {
            
             //Henter data'en fra databasen og gemmer dette i "context" variablen.
-            using (var context = new SurfBoardManagerContext(
-                serviceProvider.GetRequiredService<
-                    DbContextOptions<SurfBoardManagerContext>>()))
+            using (var context = serviceProvider.GetRequiredService<SurfBoardManagerContext>())
             {
                 
                 //Sætter "roleManager" variable til typen "RoleManager" med type parameter af "IdentityRole"

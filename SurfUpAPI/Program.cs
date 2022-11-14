@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity;
+//using Microsoft.AspNetCore.ApiAuthorization.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurfUpLibary;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,12 @@ builder.Services.AddDbContext<SurfBoardManagerContext>(options =>
 builder.Services.AddIdentity<SurfUpUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<SurfBoardManagerContext>()
     .AddTokenProvider<DataProtectorTokenProvider<SurfUpUser>>(TokenOptions.DefaultProvider);
+
+builder.Services.AddIdentityServer()
+    .AddApiAuthorization<SurfUpUser, SurfBoardManagerContext>();
+
+builder.Services.AddAuthentication()
+    .AddIdentityServerJwt();
 
 builder.Services.AddApiVersioning(options =>
 {
@@ -46,6 +54,8 @@ app.UseHttpsRedirection();
 //    // For debugging, place a debug point on next line.
 //    await y.Invoke(x);
 //});
+app.UseIdentityServer();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
