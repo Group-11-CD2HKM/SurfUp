@@ -3,14 +3,26 @@
 @using SurfUpLibary
 @inject IBoardPostService boardPostService
 <h3>BoardPost</h3>
-<ul>
-    @foreach (var item in boardPosts)
-    {
-        <li>
-            @item.Name
-        </li>
-    }
-</ul>
+<div class="container-fluid px-5 text-center">
+    <div class="row">
+        @foreach (var boardPost in boardPosts)
+        {
+            <div class="col-12 col-md-12 col-sm-12 col-lg-6 col-xl-3 gx-5">
+                <div class="outerwrapper">
+                    <div class="">
+                        <img src="@boardPost.BoardImage" class="img-fluid rounded-3" />
+                    </div>
+                    <div class="recipeName">
+                        <h3>@boardPost.Name</h3>
+                    </div>
+                    <div class="">
+                        <button class="btn btn-primary">View (!)</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 @code {
     List<BoardPost> boardPosts = new List<BoardPost>();
 }
