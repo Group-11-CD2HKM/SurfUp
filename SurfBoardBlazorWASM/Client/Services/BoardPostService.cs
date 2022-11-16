@@ -38,5 +38,10 @@ namespace SurfBoardBlazorWASM.Client.Services
         {
             throw new NotImplementedException();
         }
+
+        public void Rentboard(BoardPost boardPost, int rentalPeriod)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

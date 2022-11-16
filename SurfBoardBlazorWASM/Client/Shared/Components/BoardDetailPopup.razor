@@ -1,0 +1,56 @@
+﻿@using System.Net.Mime
+@using SurfBoardBlazorWASM.Client.Services
+@using SurfUpLibary
+@inject IBoardPostService boardPostService
+<h3>BoardDetailPopup</h3>
+
+<div class="modal fade show" id="myModal"
+     style="display:block; background-color: rgba(10,10,10,.8);"
+     aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@BoardPost.Name</h4>
+                <button type="button" class="close" @onclick="@Cancel">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>@BoardPost.BoardType</p>
+                <p>@BoardPost.Length</p>
+                <p>@BoardPost.Width</p>
+                <p>@BoardPost.Thickness</p>
+                <p>@BoardPost.Volume</p>
+                <p>@BoardPost.Equipment</p>
+                <p>@BoardPost.Price</p>
+                <input @bind="RentalPeriod" min="1"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" @onclick="@Cancel">Back</button>
+                <button type="button" class="btn" @onclick="@RentBoard">Rent</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public BoardPost BoardPost { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    public int RentalPeriod { get; set; }
+}
+
+@functions{
+
+    private Task RentBoard()
+    {
+        boardPostService.Rentboard(BoardPost, RentalPeriod);
+        return OnClose.InvokeAsync(true);
+    }
+
+    private Task Cancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+}

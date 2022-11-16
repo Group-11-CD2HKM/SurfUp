@@ -16,7 +16,11 @@
                         <h3>@boardPost.Name</h3>
                     </div>
                     <div class="">
-                        <button class="btn btn-primary">View (!)</button>
+                        <button class="btn btn-primary" @onclick="() => OpenDetailDialog()">Details</button>
+                        @if (OpenDetailpopup)
+                        {
+                            <BoardDetailPopup BoardPost="@boardPost" OnClose="@OnDetailDialogClose"></BoardDetailPopup>
+                        }
                     </div>
                 </div>
             </div>
@@ -25,10 +29,25 @@
 </div>
 @code {
     List<BoardPost> boardPosts = new List<BoardPost>();
+
+    public bool OpenDetailpopup { get; set; }
 }
 @functions{
     protected async override Task OnInitializedAsync()
     {
         boardPosts = await boardPostService.GetAllUnrentedBoardPosts();
     }
+
+    private async Task OnDetailDialogClose(bool accepted)
+    {
+        OpenDetailpopup = false;
+        StateHasChanged();
+    }
+
+    private void OpenDetailDialog()
+    {
+        OpenDetailpopup = true;
+        StateHasChanged();
+    }
+
 }
