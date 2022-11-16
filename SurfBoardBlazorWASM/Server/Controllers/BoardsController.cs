@@ -67,7 +67,7 @@ namespace SurfUpAPI.Controllers
         [MapToApiVersion("2.0")]
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetRent(int id, DateTime? endDate)
+        public async Task<IActionResult> GetRent(int id, [FromQuery]DateTime? endDate)
         {
             var surfUpUser = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
             //Metoden sætter et board til at være udlejet til en bestemt bruger

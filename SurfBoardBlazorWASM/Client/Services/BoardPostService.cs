@@ -34,9 +34,26 @@ namespace SurfBoardBlazorWASM.Client.Services
             return boardPosts;
         }
 
-        public void RentBoard(BoardPost boardPost)
+        public async Task RentBoard(BoardPost boardPost, int days)
         {
-            throw new NotImplementedException();
+            if (boardPost != null)
+            {
+                BoardPost returnBoardPost;
+                var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+                if (authState.User.Identity.IsAuthenticated)
+                {
+                    HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.ServerAPI");
+                    returnBoardPost = await httpClient.GetFromJsonAsync<BoardPost>($"api/v2.0/Boards/{boardPost.Id}?endDate={DateTime.Now.AddDays(days)}");
+                }
+                else
+                {
+                    HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.PublicServerAPI");
+                    returnBoardPost = await httpClient.GetFromJsonAsync<BoardPost>($"api//Boards/{boardPost.Id}?endDate={DateTime.Now.AddDays(days)}");
+                }
+            } else
+            {
+                throw new NullReferenceException("boardPost not set.");
+            }
         }
 
         public void Rentboard(BoardPost boardPost, int rentalPeriod)
