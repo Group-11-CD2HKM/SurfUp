@@ -47,7 +47,8 @@ namespace SurfBoardBlazorWASM.Client.Services
                 }
                 else
                 {
-                    throw new Exception("Not authorized.");
+                    HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.PublicServerAPI");
+                    returnBoardPost = await httpClient.GetFromJsonAsync<BoardPost>($"api//Boards/{boardPost.Id}?endDate={DateTime.Now.AddDays(days)}");
                 }
             } else
             {
