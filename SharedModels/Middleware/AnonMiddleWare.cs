@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using SurfUpLibary;
 
-namespace SurfBoardManager.Models.Middleware
+namespace SharedModel.Middleware
 {
     public class AnonMiddleWare
     {
@@ -38,7 +41,7 @@ namespace SurfBoardManager.Models.Middleware
                     surfUpUser = newUser;
                 }
 
-                 signInManager.SignInAsync(surfUpUser, true);
+                 //signInManager.SignInAsync(surfUpUser, true);
                 // Print out IP to screen
                 _logger.LogInformation($"Anonymous IP: {anonIp}");
             }

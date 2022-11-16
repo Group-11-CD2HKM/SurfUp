@@ -6,7 +6,7 @@ using SurfBoardManager.Areas.Identity;
 using SurfBoardManager.Models;
 using System.Globalization;
 using Microsoft.AspNetCore.Identity;
-using SurfBoardManager.Models.Middleware;
+using SharedModel.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

@@ -7,6 +7,8 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
+using SharedModel.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,11 +58,18 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.AnonIp();
 
 app.UseIdentityServer();
 app.UseAuthentication();
 app.UseAuthorization();
+app.Use(async (context, next) =>
+{
+    CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
+    CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
 
+    await next.Invoke(context);
+});
 
 app.MapRazorPages();
 app.MapControllers();

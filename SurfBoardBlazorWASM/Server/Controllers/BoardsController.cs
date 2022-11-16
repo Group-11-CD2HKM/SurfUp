@@ -64,28 +64,62 @@ namespace SurfUpAPI.Controllers
         }
 
         [MapToApiVersion("1.0")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetRentV1(int id, [FromQuery] int days, [FromQuery] string? userId)
+        {
+            var anonIp = Request.HttpContext.Connection.RemoteIpAddress;
+            
+            string? actualUserId = userId;
+            if (userId == null)
+            {
+                actualUserId = anonIp.ToString().Replace(':', '-');
+            }
+            var surfUpUser = await _userManager.FindByNameAsync(actualUserId);
+            //Metoden sætter et board til at være udlejet til en bestemt bruger
+
+            var boardPost = await _context.BoardPost.FirstOrDefaultAsync(m => m.Id == id);
+
+            //Brugere der er anonymous må ikke leje flere boards end et
+            int count = _context.BoardPost.Where(b => b.SurfUpUserId == surfUpUser.Id).Count();
+            if (count >= 1)
+            {
+                return Conflict("Only 1 board may be rented by anonymous users.");
+            }
+
+            boardPost.RentalDate = DateTime.Now;
+            boardPost.RentalDateEnd = DateTime.Now.AddDays(days);
+
+            try
+            {
+                _context.Update(boardPost);
+                //_context.Attach(surfUpUser); // Required when using sqlite?
+                await _context.SaveChangesAsync();
+                return Ok(boardPost);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                //Finder den entity der var involveret i exception
+                var exceptionEntry = ex.Entries.Single();
+                //Trækker det enkelte objekt ud og hardcaster til et BoardPost objekt
+                var clientValues = (BoardPost)exceptionEntry.Entity;
+                //Forespørger databasen for at finde frem til de nye værdier der ligger i databasen
+                var databaseEntry = exceptionEntry.GetDatabaseValues();
+                return Conflict(ex.Message);
+            }
+        }
+
         [MapToApiVersion("2.0")]
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetRent(int id, [FromQuery]DateTime? endDate)
+        public async Task<IActionResult> GetRentV2(int id, [FromQuery] int days)
         {
             var surfUpUser = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
             //Metoden sætter et board til at være udlejet til en bestemt bruger
 
             var boardPost = await _context.BoardPost.FirstOrDefaultAsync(m => m.Id == id);
 
-            //Brugere der er anonymous må ikke leje flere boards end et
-            if (surfUpUser.IsAnonymous)
-            {
-                var count = _context.BoardPost.Where(b => b.SurfUpUserId == surfUpUser.Id).Count();
-                if (count >= 1)
-                {
-                    return Conflict("Only 1 board may be rented by anonymous users.");
-                }
-            }
-
             boardPost.RentalDate = DateTime.Now;
-            boardPost.RentalDateEnd = endDate;
+            boardPost.RentalDateEnd = DateTime.Now.AddDays(days);
 
             try
             {

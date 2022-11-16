@@ -43,12 +43,12 @@ namespace SurfBoardBlazorWASM.Client.Services
                 if (authState.User.Identity.IsAuthenticated)
                 {
                     HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.ServerAPI");
-                    returnBoardPost = await httpClient.GetFromJsonAsync<BoardPost>($"api/v2.0/Boards/{boardPost.Id}?endDate={DateTime.Now.AddDays(days)}");
+                    returnBoardPost = await httpClient.GetFromJsonAsync<BoardPost>($"api/v2.0/Boards/{boardPost.Id}?days={days}");
                 }
                 else
                 {
                     HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.PublicServerAPI");
-                    returnBoardPost = await httpClient.GetFromJsonAsync<BoardPost>($"api//Boards/{boardPost.Id}?endDate={DateTime.Now.AddDays(days)}");
+                    returnBoardPost = await httpClient.GetFromJsonAsync<BoardPost>($"api/Boards/{boardPost.Id}?days={days}");
                 }
             } else
             {
