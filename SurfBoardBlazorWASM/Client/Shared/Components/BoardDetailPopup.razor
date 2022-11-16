@@ -43,10 +43,10 @@
 
 @functions{
 
-    private Task RentBoard()
+    private async Task RentBoard()
     {
-        boardPostService.Rentboard(BoardPost, RentalPeriod);
-        return OnClose.InvokeAsync(true);
+        await boardPostService.RentBoard(BoardPost, RentalPeriod);
+        await OnClose.InvokeAsync(false);
     }
 
     private Task Cancel()

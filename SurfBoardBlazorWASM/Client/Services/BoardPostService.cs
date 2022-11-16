@@ -55,10 +55,5 @@ namespace SurfBoardBlazorWASM.Client.Services
                 throw new NullReferenceException("boardPost not set.");
             }
         }
-
-        public void Rentboard(BoardPost boardPost, int rentalPeriod)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
