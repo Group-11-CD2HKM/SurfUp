@@ -12,23 +12,30 @@ namespace SurfUpAPI.Controllers
         private readonly HttpClient _client;
         private readonly string _openWeatherAPIKey = "5a03b2f54d71377094b40207093cb606";
 
-        public WeatherController(HttpClient client)
+        public WeatherController(IHttpClientFactory client)
         {
-            _client = client;
+            _client = client.CreateClient("OpenWeatherClient");
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetWeather([FromQuery]string? cityName, [FromQuery]int forecastLength)
+        public async Task<IActionResult> GetWeather([FromQuery]string? cityName)
         {
-            //Via et kald til Openweather.org, returnér vejrdata for 5 dage ud fra et bynavn
+            //Via et kald til Openweather.org, returnér 5dages vejrdata for en by
 
-            HttpResponseMessage response = await _client.GetAsync($"/data/2.5/forecast?q={cityName ?? "Odense"},DK&appid={_openWeatherAPIKey}");
+            HttpResponseMessage response = await _client.GetAsync($"data/2.5/forecast?q={cityName},DK&appid={_openWeatherAPIKey}");
             if (response.IsSuccessStatusCode)
             {
                 var weatherData = await response.Content.ReadFromJsonAsync<Root>();
+
                 return Ok(weatherData);
             }
-            return BadRequest();
+
+            if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return NotFound("City not found");
+            }
+
+            return BadRequest("Invalid API key or an unexpected error. Test Openweather API directly for more details...");
         }
     }
 }

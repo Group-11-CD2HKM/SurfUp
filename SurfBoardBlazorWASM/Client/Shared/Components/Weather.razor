@@ -1,0 +1,84 @@
+﻿@using SharedModels.WeatherModels.WeatherViewModels;
+@using SurfBoardBlazorWASM.Client.Services;
+@inject WeatherService weatherService
+
+<h3>Weather forecast</h3>
+
+<div class="d-flex flex-row mb-1" style="border:solid 1px grey; vertical-align:middle">
+    <input placeholder="Search town" type="text" @bind="CityInput" />
+    <button class="btn btn-primary" @onclick="@GetWeatherAsync">Search</button>
+    <h7>Forecast length:</h7>
+    <input type="range" @bind="ForecastLength" @onclick="@OnForecastLengthPick" min="0" max="6" />
+    <h7>@ForecastLength</h7>
+</div>
+
+@if(ValidCityInput)
+{
+    <div class="container-fluid" style="border:solid 1px grey">
+        <div class="row">
+            @foreach (var forecast in ForecastsToDisplay)
+            {
+                <div class="col-2">
+                    <div class="outerwrapper">
+                        <div class="recipeName">
+                            <h5 style="color:black; font-weight:bold">@forecast.Description</h5>
+                        </div>
+                        @foreach (var weather in forecast.WeatherViewModelList)
+                        {
+                            <div class="d-flex flex-row bd-highlight mb-1" style="border:solid 1px grey">
+                                <div class="p-2 bd-highlight" style="color:purple; font-weight:bold">@weather.TimeOfDay</div>
+                                <div class="p-2 bd-highlight">@weather.Description</div>
+                                <div class="p-2 bd-highlight">@weather.TempCelcius°C</div>
+                                <img src="@weather.Icon" style="width:15%">
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+@code {
+    public List<ForecastViewModel>? Forecasts { get; set; }
+    public List<ForecastViewModel>? ForecastsToDisplay { get; set; } 
+
+    public bool ValidCityInput { get; set; }
+
+    public string? CityInput { get; set; }
+
+    public int ForecastLength { get; set; }
+}
+
+@functions{
+
+    protected async override Task OnInitializedAsync()
+    {
+        ForecastLength = 6;
+    }
+
+    private async Task GetWeatherAsync()
+    {
+        ValidCityInput = await weatherService.CheckForValidCityName(CityInput);
+
+        if (ValidCityInput)
+        {
+            Forecasts = await weatherService.GetWeather(CityInput);
+            ForecastsToDisplay = Forecasts;
+            OnForecastLengthPick();
+        }
+        else
+        {
+            CityInput = "Kunne ikke finde by..";
+        }
+    }
+
+    private void OnForecastLengthPick()
+    {
+        if(Forecasts != null)
+        {
+            ForecastsToDisplay = Forecasts.GetRange(0, ForecastLength);
+        }
+    }
+}
