@@ -1,6 +1,7 @@
 ﻿
 
 using Microsoft.AspNetCore.Identity;
+using SharedModels;
 
 namespace SurfUpLibary
 {
@@ -11,5 +12,10 @@ namespace SurfUpLibary
         public List<BoardPost>? BoardPosts { get; set; }
         
         public bool IsAnonymous { get; set; } = false;
+
+        public bool IsRenter { get; set; }
+
+        public UserAddress? Address { get; set; }
+        
     }
 }
