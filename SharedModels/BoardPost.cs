@@ -92,6 +92,6 @@ namespace SurfUpLibary
             SurfUpUser = null;
             IsRented = false;
         }
-        public SurfUpUser BoardCreator { get; set; }
+        public SurfUpUser? BoardCreator { get; set; }
     }
 }
