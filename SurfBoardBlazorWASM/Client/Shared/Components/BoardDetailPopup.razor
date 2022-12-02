@@ -2,6 +2,7 @@
 @using SurfBoardBlazorWASM.Client.Services
 @using SurfUpLibary
 @inject IBoardPostService boardPostService
+@inject BoardPostRentState BoardPostRentState
 <h3>BoardDetailPopup</h3>
 
 <div class="modal fade show" id="myModal"
@@ -21,7 +22,7 @@
                 <p>@BoardPost.Volume</p>
                 <p>@BoardPost.Equipment</p>
                 <p>@BoardPost.Price</p>
-                <input @bind="RentalPeriod" min="1"/>
+                <input @bind="BoardPostRentState.RentalPeriod" min="1"/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" @onclick="@Cancel">Back</button>
@@ -45,6 +46,7 @@
 
     private async Task RentBoard()
     {
+        RentalPeriod = BoardPostRentState.RentalPeriod;
         await boardPostService.RentBoard(BoardPost, RentalPeriod);
         await OnClose.InvokeAsync(false);
     }

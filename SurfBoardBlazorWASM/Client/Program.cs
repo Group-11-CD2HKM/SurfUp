@@ -20,6 +20,9 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 builder.Services.AddScoped<IBoardPostService,BoardPostService>();
 builder.Services.AddScoped<WeatherService>();
 
+// Handle state for rent
+builder.Services.AddScoped<BoardPostRentState>();
+
 builder.Services.AddApiAuthorization();
 
 await builder.Build().RunAsync();
