@@ -1,0 +1,32 @@
+﻿@using SurfBoardBlazorWASM.Client.Services
+@using SurfUpLibary
+@inject IBoardPostService BoardPostService
+
+<h3>CreateBoard</h3>
+
+<EditForm Model="@boardPost" OnValidSubmit="@CreateBoardPost" >
+    <DataAnnotationsValidator/>
+
+    <InputText id="name" @bind-Value="boardPost.Name"/>
+    <InputNumber id="width" @bind-Value="boardPost.Width"/>
+    <InputNumber id="length" @bind-Value="boardPost.Length"/>
+    <InputNumber id="thickness" @bind-Value="boardPost.Thickness"/>
+    <InputNumber id="volume" @bind-Value="boardPost.Volume"/>
+    <InputSelect id="boardType" @bind-Value="boardPost.BoardType"/>
+    <InputText id="equipment" @bind-Value="boardPost.Equipment"/>
+    <InputNumber id="price" @bind-Value="boardPost.Price"/>
+    <InputText id="boardImage" @bind-Value="boardPost.BoardImage"/>
+
+    <button type="submit">Gem Board</button>
+
+</EditForm>
+
+
+@code {
+    private BoardPost boardPost = new();
+
+    // Handle valid editform
+    private void CreateBoardPost(){
+        BoardPostService.CreateBoardPost(boardPost);
+    }
+}

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfUpLibary;
 
@@ -11,9 +12,10 @@ using SurfUpLibary;
 namespace SurfUpLibary.Migrations
 {
     [DbContext(typeof(SurfBoardManagerContext))]
-    partial class SurfBoardManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20221202091817_createdboards")]
+    partial class createdboards
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -300,36 +302,6 @@ namespace SurfUpLibary.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SharedModels.UserAddress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StreetName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StreetNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserAddress");
-                });
-
             modelBuilder.Entity("SurfUpLibary.BoardPost", b =>
                 {
                     b.Property<int>("Id")
@@ -404,9 +376,6 @@ namespace SurfUpLibary.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -419,9 +388,6 @@ namespace SurfUpLibary.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsAnonymous")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRenter")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -458,8 +424,6 @@ namespace SurfUpLibary.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AddressId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -536,17 +500,6 @@ namespace SurfUpLibary.Migrations
                     b.Navigation("BoardCreator");
 
                     b.Navigation("SurfUpUser");
-                });
-
-            modelBuilder.Entity("SurfUpLibary.SurfUpUser", b =>
-                {
-                    b.HasOne("SharedModels.UserAddress", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("SurfUpLibary.SurfUpUser", b =>

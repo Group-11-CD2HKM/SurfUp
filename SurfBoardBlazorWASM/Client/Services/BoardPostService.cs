@@ -18,6 +18,15 @@ namespace SurfBoardBlazorWASM.Client.Services
             _authenticationStateProvider = authenticationStateProvider;
         }
 
+        // Sends boardpost to API
+        // API handles BoardCreator assignment
+        public async Task CreateBoardPost(BoardPost boardPost)
+        {
+            HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.ServerAPI");
+            var response = await httpClient.PostAsJsonAsync<BoardPost>("api/v2.0/Boards", boardPost);
+            response.EnsureSuccessStatusCode();
+        }
+
         public async Task<List<BoardPost>> GetAllUnrentedBoardPosts()
         {
             List<BoardPost> boardPosts;
