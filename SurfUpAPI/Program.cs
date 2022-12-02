@@ -15,6 +15,10 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddHttpClient("OpenWeatherClient", client => 
+client.BaseAddress = new Uri("https://api.openweathermap.org/")
+);
+
 //builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<SurfBoardManagerContext>(options =>
@@ -36,10 +40,13 @@ builder.Services.AddApiVersioning(options =>
     options.DefaultApiVersion = ApiVersion.Default;
     options.ReportApiVersions = true;
 }
-
 );
 
+builder.Services.AddCors(policy => policy.AddDefaultPolicy(policy => policy.WithOrigins("*").AllowAnyHeader()));
+
 var app = builder.Build();
+
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
