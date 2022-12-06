@@ -30,8 +30,8 @@ namespace SurfUpAPI.Controllers
         {
             //For ikke-premium brugere
             //Metoden returnerer boards der koster under 500kr.og ikke udlejet.
-
             var boards = await _context.BoardPost.ToListAsync();
+
             var unrentedBoards = boards.Where(b => b.IsRented == false && b.Price < 500);
             if (boards == null)
             {

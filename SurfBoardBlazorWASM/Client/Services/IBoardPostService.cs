@@ -7,5 +7,7 @@ namespace SurfBoardBlazorWASM.Client.Services
         public Task<List<BoardPost>> GetAllUnrentedBoardPosts();
 
         public Task RentBoard(BoardPost boardPost, int days);
+
+        public Task CreateBoardPost(BoardPost boardPost);
     }
 }

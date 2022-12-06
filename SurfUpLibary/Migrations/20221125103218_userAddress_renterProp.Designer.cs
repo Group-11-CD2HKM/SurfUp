@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurfUpLibary;
 
@@ -11,9 +12,10 @@ using SurfUpLibary;
 namespace SurfUpLibary.Migrations
 {
     [DbContext(typeof(SurfBoardManagerContext))]
-    partial class SurfBoardManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20221125103218_userAddress_renterProp")]
+    partial class userAddress_renterProp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -338,9 +340,6 @@ namespace SurfUpLibary.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("BoardCreatorId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("BoardImage")
                         .HasColumnType("NVarChar(255)");
 
@@ -388,8 +387,6 @@ namespace SurfUpLibary.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BoardCreatorId");
 
                     b.HasIndex("SurfUpUserId");
 
@@ -525,15 +522,9 @@ namespace SurfUpLibary.Migrations
 
             modelBuilder.Entity("SurfUpLibary.BoardPost", b =>
                 {
-                    b.HasOne("SurfUpLibary.SurfUpUser", "BoardCreator")
-                        .WithMany("CreatedBoards")
-                        .HasForeignKey("BoardCreatorId");
-
                     b.HasOne("SurfUpLibary.SurfUpUser", "SurfUpUser")
                         .WithMany("BoardPosts")
                         .HasForeignKey("SurfUpUserId");
-
-                    b.Navigation("BoardCreator");
 
                     b.Navigation("SurfUpUser");
                 });
@@ -552,8 +543,6 @@ namespace SurfUpLibary.Migrations
             modelBuilder.Entity("SurfUpLibary.SurfUpUser", b =>
                 {
                     b.Navigation("BoardPosts");
-
-                    b.Navigation("CreatedBoards");
                 });
 #pragma warning restore 612, 618
         }

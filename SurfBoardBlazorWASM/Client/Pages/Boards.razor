@@ -17,20 +17,22 @@
                         <h3>@boardPost.Name</h3>
                     </div>
                     <div class="">
-                        <button class="btn btn-primary" @onclick="() => OpenDetailDialog()">Details</button>
+                        <button class="btn btn-primary" @onclick="() => OpenDetailDialog(boardPost)">Details</button>
                         @if (OpenDetailpopup)
                         {
-                            <BoardDetailPopup BoardPost="@boardPost" OnClose="@OnDetailDialogClose"></BoardDetailPopup>
+                            <BoardDetailPopup BoardPost="SelectedBoardPost" OnClose="@OnDetailDialogClose"></BoardDetailPopup>
                         }
+
                     </div>
                 </div>
             </div>
         }
     </div>
 </div>
-<Weather></Weather>
+@*<Weather></Weather>*@
 @code {
     List<BoardPost> boardPosts = new List<BoardPost>();
+    public BoardPost SelectedBoardPost { get; set; }
 
     public bool OpenDetailpopup { get; set; }
 }
@@ -46,8 +48,9 @@
         StateHasChanged();
     }
 
-    private void OpenDetailDialog()
+    private void OpenDetailDialog(BoardPost boardPost)
     {
+        SelectedBoardPost = boardPost;
         OpenDetailpopup = true;
         StateHasChanged();
     }
