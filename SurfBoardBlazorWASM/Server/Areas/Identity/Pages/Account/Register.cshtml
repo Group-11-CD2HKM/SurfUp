@@ -12,22 +12,48 @@
             <h2>Create a new account.</h2>
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
+            <div class="form-floating mb-1">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
                 <label asp-for="Input.Email"></label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <div class="form-floating">
+            <div class="form-floating mb-1">
                 <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
                 <label asp-for="Input.Password"></label>
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
-            <div class="form-floating">
+            <div class="form-floating mb-1">
                 <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
                 <label asp-for="Input.ConfirmPassword"></label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <div class="form-check mb-1">
+                <label asp-for="Input.IsRenter" class="form-check-label"></label>
+                <input asp-for="Input.IsRenter" class="form-check-input" aria-required="false"/>
+            </div>
+            <div id="renterParts" style="display: none;">
+                <div class="form-floating mb-1">
+                    <input asp-for="Input.StreetName" class="form-control" aria-required="false" />
+                    <label asp-for="Input.StreetName"></label>
+                    <span asp-validation-for="Input.StreetName" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-1">
+                    <input asp-for="Input.StreetNumber" class="form-control" aria-required="false" />
+                    <label asp-for="Input.StreetNumber"></label>
+                    <span asp-validation-for="Input.StreetNumber" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-1">
+                    <input asp-for="Input.ZipCode" class="form-control" autocomplete="new-password" aria-required="false" />
+                    <label asp-for="Input.ZipCode"></label>
+                    <span asp-validation-for="Input.ZipCode" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-1">
+                    <input asp-for="Input.City" class="form-control" autocomplete="new-password" aria-required="false" />
+                    <label asp-for="Input.City"></label>
+                    <span asp-validation-for="Input.City" class="text-danger"></span>
+                </div>
+            </div>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary mb-4">Register</button>
         </form>
     </div>
     <div class="col-md-6 col-md-offset-2">
@@ -37,25 +63,25 @@
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) == 0)
                 {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
+                            <div>
+                                <p>
+                                    There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
+                                    about setting up this ASP.NET application to support logging in via external services</a>.
+                                </p>
+                            </div>
                 }
                 else
                 {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
+                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                <div>
+                                    <p>
                                 @foreach (var provider in Model.ExternalLogins)
                                 {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
                                 }
-                            </p>
-                        </div>
-                    </form>
+                                    </p>
+                                </div>
+                            </form>
                 }
             }
         </section>
@@ -64,4 +90,19 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+   <script >
+            let checkBox = document.getElementById('Input_IsRenter');
+            let checked = true;
+            checkBox.addEventListener('change', (event) => {
+                checked = !checked;
+                if (checked) {
+                    document.getElementById('renterParts').style.display = 'none';
+                } else {
+                    document.getElementById('renterParts').style.display = 'block';
+                }
+            });
+            let form = document.getElementById('registerForm');
+            
+    </script>
 }

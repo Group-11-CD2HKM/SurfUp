@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using SharedModels;
 using SurfUpLibary;
 
 namespace SurfBoardBlazorWASM.Server.Areas.Identity.Pages.Account
@@ -51,7 +52,7 @@ namespace SurfBoardBlazorWASM.Server.Areas.Identity.Pages.Account
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         [BindProperty]
-        public InputModel Input { get; set; }
+        public InputModel Input { get; set; } = new InputModel();
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -98,6 +99,23 @@ namespace SurfBoardBlazorWASM.Server.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Display(Name = "Udlejer")]
+            public bool IsRenter { get; set; }
+
+            // ADDRESS
+            [Display(Name = "By")]
+            public string City { get; set; }
+
+            [Display(Name = "Postnummer")]
+            [MaxLength(4)]
+            public string ZipCode { get; set; }
+
+            [Display(Name = "Vej")]
+            public string StreetName { get; set; }
+
+            [Display(Name = "Hus nr.")]
+            public string StreetNumber { get; set; }
         }
 
 
@@ -117,6 +135,19 @@ namespace SurfBoardBlazorWASM.Server.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                user.IsRenter = Input.IsRenter;
+
+                if (Input.IsRenter)
+                {
+                    user.Address = new UserAddress();
+
+                    user.Address.StreetName = Input.StreetName;
+                    user.Address.StreetNumber = Input.StreetNumber;
+                    user.Address.City = Input.City;
+                    user.Address.ZipCode = Input.ZipCode;
+                }
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
