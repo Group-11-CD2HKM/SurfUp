@@ -133,5 +133,26 @@ namespace SurfUpAPI.Controllers
             }
         }
 
+        [MapToApiVersion("2.0")]
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult> CreateBoardPost(BoardPost boardPost)
+        {
+            // Find brugeren der har kaldt metoden
+            // Sæt brugeren til at være boardets creator
+            // Gem boardet i databasen
+
+            var surfUpUser = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            boardPost.BoardCreator = surfUpUser;
+
+            await _context.AddAsync(boardPost);
+            await _context.SaveChangesAsync();
+
+            var test = await _context.BoardPost.FirstOrDefaultAsync(b => b.Id == boardPost.Id);
+
+            return Ok(test);
+        }
+
     }
 }

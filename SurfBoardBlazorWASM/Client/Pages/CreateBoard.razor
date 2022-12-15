@@ -7,17 +7,32 @@
 <EditForm Model="@boardPost" OnValidSubmit="@CreateBoardPost" >
     <DataAnnotationsValidator/>
 
-    <InputText id="name" @bind-Value="boardPost.Name"/>
-    <InputNumber id="width" @bind-Value="boardPost.Width"/>
-    <InputNumber id="length" @bind-Value="boardPost.Length"/>
-    <InputNumber id="thickness" @bind-Value="boardPost.Thickness"/>
-    <InputNumber id="volume" @bind-Value="boardPost.Volume"/>
-    <InputSelect id="boardType" @bind-Value="boardPost.BoardType"/>
-    <InputText id="equipment" @bind-Value="boardPost.Equipment"/>
-    <InputNumber id="price" @bind-Value="boardPost.Price"/>
-    <InputText id="boardImage" @bind-Value="boardPost.BoardImage"/>
+    <label for="name">Name</label> <br />
+    <InputText id="name" @bind-Value="boardPost.Name" /><br />
+    <label for="width">Width</label><br />
+    <InputNumber id="width" @bind-Value="boardPost.Width" /><br />
+    <label for="length">Length</label><br />
+    <InputNumber id="length" @bind-Value="boardPost.Length" /><br />
+    <label for="thickness">Thickness</label><br />
+    <InputNumber id="thickness" @bind-Value="boardPost.Thickness"/><br />
+    <label for="volume">Volume</label><br />
+    <InputNumber id="volume" @bind-Value="boardPost.Volume" /><br />
+    <label for="boardType">Type</label><br />
+    <InputSelect id="boardType" @bind-Value="boardPost.BoardType">
+        <br />
+        @foreach (BoardPost.Type item in Enum.GetValues(typeof(BoardPost.Type)))
+        {
+            <option value="@item">@item.ToString()</option>
+        }
+    </InputSelect><br />
+    <label for="equiment">Equipment</label><br />
+    <InputText id="equipment" @bind-Value="boardPost.Equipment" /><br />
+    <label for="price">Price</label><br />
+    <InputNumber id="price" @bind-Value="boardPost.Price" /><br />
+    <label for="boardImage">Image</label><br />
+    <InputText id="boardImage" @bind-Value="boardPost.BoardImage" /><br />
 
-    <button type="submit">Gem Board</button>
+    <button type="submit" class="my-2">Gem Board</button>
 
 </EditForm>
 

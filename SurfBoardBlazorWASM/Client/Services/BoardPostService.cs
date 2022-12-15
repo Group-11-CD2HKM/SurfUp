@@ -18,13 +18,20 @@ namespace SurfBoardBlazorWASM.Client.Services
             _authenticationStateProvider = authenticationStateProvider;
         }
 
-        // Sends boardpost to API
+        // Send boardpost to API
         // API handles BoardCreator assignment
         public async Task CreateBoardPost(BoardPost boardPost)
         {
             HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.ServerAPI");
-            var response = await httpClient.PostAsJsonAsync<BoardPost>("api/v2.0/Boards", boardPost);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var response = await httpClient.PostAsJsonAsync<BoardPost>("api/v2.0/Boards", boardPost);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception e)
+            {
+                _ = e;
+            }
         }
 
         public async Task<List<BoardPost>> GetAllUnrentedBoardPosts()
@@ -35,7 +42,8 @@ namespace SurfBoardBlazorWASM.Client.Services
             {
                 HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.ServerAPI");
                 boardPosts = await httpClient.GetFromJsonAsync<List<BoardPost>>("api/v2.0/Boards") ?? new List<BoardPost>();
-            } else
+            }
+            else
             {
                 HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.PublicServerAPI");
                 boardPosts = await httpClient.GetFromJsonAsync<List<BoardPost>>("api/Boards") ?? new List<BoardPost>();
@@ -59,7 +67,8 @@ namespace SurfBoardBlazorWASM.Client.Services
                     HttpClient httpClient = _httpClientFactory.CreateClient("SurfBoardBlazorWASM.PublicServerAPI");
                     returnBoardPost = await httpClient.GetFromJsonAsync<BoardPost>($"api//Boards/{boardPost.Id}?endDate={DateTime.Now.AddDays(days)}");
                 }
-            } else
+            }
+            else
             {
                 throw new NullReferenceException("boardPost not set.");
             }
