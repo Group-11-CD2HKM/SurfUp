@@ -16,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("SurfBoardManagerContext");
 builder.Services.AddDbContext<SurfBoardManagerContext>(options =>
     options.UseSqlServer(connectionString));
+builder.Services.AddHttpClient("OpenWeatherClient", client => client.BaseAddress = new Uri("https://api.openweathermap.org/"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<SurfUpUser>(options => options.SignIn.RequireConfirmedAccount = false)
