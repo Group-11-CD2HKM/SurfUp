@@ -15,9 +15,7 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddHttpClient("OpenWeatherClient", client => 
-client.BaseAddress = new Uri("https://api.openweathermap.org/")
-);
+
 
 //builder.Services.AddSwaggerGen();
 

@@ -12,7 +12,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHttpClient("SurfBoardBlazorWASM.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 builder.Services.AddHttpClient("SurfBoardBlazorWASM.PublicServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-builder.Services.AddHttpClient("WeatherClient", client => client.BaseAddress = new Uri("https://localhost:7175/"));
+//builder.Services.AddHttpClient("WeatherClient", client => client.BaseAddress = new Uri("https://localhost:7175/"));
 
 
 // Supply HttpClient instances that include access tokens when making requests to the server project

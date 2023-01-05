@@ -11,7 +11,7 @@ namespace SurfBoardBlazorWASM.Client.Services
         private readonly HttpClient _client;
         public WeatherService(IHttpClientFactory client)
         {
-            _client = client.CreateClient("WeatherClient");
+            _client = client.CreateClient("SurfBoardBlazorWASM.PublicServerAPI");
         }
 
         public async Task<List<ForecastViewModel>> GetWeather(string? cityName)
@@ -21,9 +21,14 @@ namespace SurfBoardBlazorWASM.Client.Services
 
             List<ForecastViewModel> forecasts = new List<ForecastViewModel>();
             List<int> datesFound = new List<int>();
-
-            var weatherData = await _client.GetFromJsonAsync<Root>($"api/weather?cityname={cityName}");
-
+            Root weatherData;
+            try
+            {
+                weatherData = await _client.GetFromJsonAsync<Root>($"api/weather?cityname={cityName}");
+            } catch(Exception ex) 
+            {
+                return forecasts;
+            }
             foreach (var weather in weatherData.list)
             {
                 if (!datesFound.Contains(DateTime.Parse(weather.dt_txt).Day))

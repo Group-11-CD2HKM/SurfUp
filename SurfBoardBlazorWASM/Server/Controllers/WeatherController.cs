@@ -7,10 +7,11 @@ namespace SurfUpAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class WeatherController : ControllerBase
     {
         private readonly HttpClient _client;
-        private readonly string _openWeatherAPIKey = "5a03b2f54d71377094b40207093cb606";
+        private readonly string _openWeatherAPIKey = "148932149d9e7c5c7e5e3a39504a6054";
 
         public WeatherController(IHttpClientFactory client)
         {
@@ -21,8 +22,15 @@ namespace SurfUpAPI.Controllers
         public async Task<IActionResult> GetWeather([FromQuery]string? cityName)
         {
             //Via et kald til Openweather.org, returnér 5dages vejrdata for en by
-
-            HttpResponseMessage response = await _client.GetAsync($"data/2.5/forecast?q={cityName},DK&appid={_openWeatherAPIKey}");
+            string url = $"data/2.5/forecast?q={cityName},DK&appid={_openWeatherAPIKey}";
+            HttpResponseMessage response;
+            try
+            {
+                response = await _client.GetAsync(url);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
             if (response.IsSuccessStatusCode)
             {
                 var weatherData = await response.Content.ReadFromJsonAsync<Root>();
